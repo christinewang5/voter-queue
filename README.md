@@ -1,5 +1,5 @@
 # Voter Queue Project
-
-* Used SparkJava web framework 
+* SparkJava - web framework
+* postgres - database 
 * Lombok - library for getters/setters
 * Jackson  - JSON parsing library 
