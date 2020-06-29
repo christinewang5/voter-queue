@@ -9,15 +9,19 @@ import org.sql2o.quirks.PostgresQuirks;
 import java.io.IOException;
 import java.util.UUID;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.staticFiles;
 
 /**
- * Hello world!
+ * Controller for the Voter Queue App.
+ * Contains all the routes.
  */
 public class Controller {
+    private static final int HTTP_OK = 200;
     private static final int HTTP_BAD_REQUEST = 400;
 
     public static void main(String[] args) {
+        // TODO - separate DB code out
         String dbHost = "localhost";
         int dbPort = 5432;
         String database = "voter_queue";
@@ -32,30 +36,70 @@ public class Controller {
             }
         });
 
-        VoteModel voteModel = new VoteModel(sql2o);
+        staticFiles.location("/public");
+
+        VoteService voteService = new VoteService(sql2o);
 
         // insert a voter entry
-        post("/start_vote/:precinct", (req, res) -> {
+        get("/start_vote/:precinct", (req, res) -> {
+            res.status(HTTP_OK);
             String precinct = req.params(":precinct");
-            int p = Integer.valueOf(precinct);
-            UUID uuid = voteModel.startVote(p);
-            res.status(HTTP_BAD_REQUEST);
+            int p = Integer.parseInt(precinct);
+            UUID uuid = voteService.startVote(p);
+            // TODO - remove maxAge  of cookie
+            res.cookie("/", "uuid", uuid.toString(), 3600, false, true);
             return uuid;
         });
 
-        // get all votes
-        get("/", (req, res) -> {
-            res.status(200);
+        get("/end_vote/:precinct", (req, res) -> {
+            String precinct = req.params(":precinct");
+            int p = Integer.parseInt(precinct);
+            String cookie = req.cookie("uuid");
+            System.out.println(cookie);
+            voteService.endVote(UUID.fromString(cookie), p);
+            res.status(HTTP_OK);
+            // TODO - make this look better
+            return "Thanks for checking in!";
+        });
+
+        // TODO - calculate average, change to moving average
+        get("/wait_time/:precinct", (req, res) -> {
+            res.status(HTTP_OK);
+            String precinct = req.params(":precinct");
+            int p = Integer.parseInt(precinct);
             res.type("application/json");
-            return dataToJson(voteModel.getAllVotes());
+            return dataToJson(voteService.getWaitTime(p));
+        });
+
+        // TODO - remove this, for debugging
+        get("/getAll", (req, res) -> {
+            res.status(HTTP_OK);
+            res.type("application/json");
+            return dataToJson(voteService.getAllVotes());
+        });
+
+        // TODO - remove this, for debugging
+        get("/getComplete", (req, res) -> {
+            res.status(HTTP_OK);
+            res.type("application/json");
+            return dataToJson(voteService.getAllCompleteVotes());
+        });
+
+        // TODO - create QR code front end
+        get("/create", (req, res) -> {
+            res.status(HTTP_OK);
+            res.type("application/json");
+            return dataToJson(voteService.getAllVotes());
         });
     }
+
     public static String dataToJson(Object data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.writeValueAsString(data);
             return mapper.writeValueAsString(data);
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("IOException from a StringWriter?");
         }
     }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/voter-queue.iml" filepath="$PROJECT_DIR$/voter-queue.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/voter-queue.iml" filepath="$PROJECT_DIR$/.idea/voter-queue.iml" />
     </modules>
   </component>
 </project>
