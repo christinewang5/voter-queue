@@ -32,7 +32,8 @@ public class VoteService {
     }
 
     // TODO - throw error if uuid doesn't exist
-    public void endVote(UUID uuid, int precinct) {
+    public long endVote(UUID uuid, int precinct) {
+        long waitTime=0;
         try (Connection conn = sql2o.beginTransaction()) {
             List<VoteModel> voteModels = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
                     .addParameter("uuid", uuid)
@@ -40,7 +41,7 @@ public class VoteService {
             Date startTime = voteModels.get(0).getStartTime();
             System.out.printf("startTime: %d\n", startTime.getTime());
             long waitTimeInMs = new Date().getTime() - startTime.getTime();
-            long waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
+            waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
             System.out.printf("waitTime: %d\n", waitTime);
             conn.createQuery("INSERT INTO complete_vote(uuid, precinct, waitTime) VALUES (:uuid, :precinct, :waitTime)")
                     .addParameter("uuid", uuid)
@@ -49,7 +50,7 @@ public class VoteService {
                     .executeUpdate();
             conn.commit();
         }
-        return;
+        return waitTime;
     }
 
     // TODO - check if precinct exists, check if wait time is calculated correctly.
