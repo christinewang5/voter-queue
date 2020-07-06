@@ -31,15 +31,14 @@ public class VoteService {
         }
     }
 
-    // TODO - throw error if uuid doesn't exist
-    public long endVote(UUID uuid, int precinct) {
+    public long endVote(UUID uuid, int precinct) throws Exception {
         long waitTime=0;
         try (Connection conn = sql2o.beginTransaction()) {
             List<VoteModel> voteModels = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
                     .addParameter("uuid", uuid)
                     .executeAndFetch(VoteModel.class);
+            if (voteModels.isEmpty()) throw new Exception("No check in data. Failed to checkout.");
             Date startTime = voteModels.get(0).getStartTime();
-            System.out.printf("startTime: %d\n", startTime.getTime());
             long waitTimeInMs = new Date().getTime() - startTime.getTime();
             waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
             System.out.printf("waitTime: %d\n", waitTime);
@@ -53,12 +52,12 @@ public class VoteService {
         return waitTime;
     }
 
-    // TODO - check if precinct exists, check if wait time is calculated correctly.
-    public Integer getWaitTime(int precinct) {
+    public Integer getWaitTime(int precinct) throws Exception{
         try (Connection conn = sql2o.open()) {
             List<Integer> waitTime = conn.createQuery("SELECT AVG(waitTime) FROM complete_vote WHERE precinct=:precinct")
                     .addParameter("precinct", precinct)
                     .executeAndFetch(Integer.class);
+            if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
             return waitTime.get(0);
         }
     }

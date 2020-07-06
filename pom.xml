@@ -98,6 +98,11 @@
       <artifactId>j2html</artifactId>
       <version>0.7</version>
     </dependency>
+    <dependency>
+      <groupId>com.despegar</groupId>
+      <artifactId>spark-test</artifactId>
+      <version>1.1.8</version>
+    </dependency>
   </dependencies>
 
   <build>

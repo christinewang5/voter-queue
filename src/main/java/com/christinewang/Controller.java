@@ -2,10 +2,13 @@ package com.christinewang;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.zxing.WriterException;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
+import spark.servlet.SparkApplication;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -23,6 +26,8 @@ import static spark.Spark.staticFiles;
 public class Controller {
     private static final int HTTP_OK = 200;
     private static final int HTTP_BAD_REQUEST = 400;
+    private static final int TIME_IN_DAY_IN_S = 86400;
+    private static Logger LOG = LoggerFactory.getLogger(Controller.class);
     private static final String WEB_HOST = "localhost";
     private static final int WEB_PORT = 4567;
     private static final int MIN_PRECINCT = 0;
@@ -30,7 +35,6 @@ public class Controller {
     private static final int MAX_PRECINCT = 10;
 
     public static void main(String[] args) {
-        // TODO - separate DB code out
         String dbHost = "localhost";
         int dbPort = 5432;
         String database = "voter_queue";
@@ -51,36 +55,54 @@ public class Controller {
 
         // insert a voter entry
         get("/start_vote/:precinct", (req, res) -> {
-            res.status(HTTP_OK);
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            UUID uuid = voteService.startVote(p);
-            // TODO - remove maxAge  of cookie
-            res.cookie("/", "uuid", uuid.toString(), 3600, false, true);
-            return uuid;
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                UUID uuid = voteService.startVote(p);
+                res.cookie("/", "uuid", uuid.toString(), TIME_IN_DAY_IN_S, false, true);
+                res.type("application/json");
+                res.status(HTTP_OK);
+                return "Thanks for checking in! Remember to check out at the end";
+            } catch (Exception e) {
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null; // TODO - custom error message
+            }
         });
 
         get("/end_vote/:precinct", (req, res) -> {
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            String cookie = req.cookie("uuid");
-            if (cookie==null){
-                return "Go to the start_vote page to get a cookie first!";
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                String cookie = req.cookie("uuid");
+                System.out.println(cookie);
+                if (cookie==null){
+                    return "Go to the start_vote page to get a cookie first!";
+                }
+                String waitTime = String.valueOf(voteService.endVote(UUID.fromString(cookie), p));
+                res.type("application/json");
+                res.status(HTTP_OK);
+                return "Thanks for checking in! You waited "+waitTime+" minutes!";
+            } catch (Exception e) {
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
             }
-            System.out.println(cookie);
-            String waitTime = String.valueOf(voteService.endVote(UUID.fromString(cookie), p));
-            res.status(HTTP_OK);
-            // TODO - make this look better
-            return "Thanks for checking in! You waited "+waitTime+" minutes!";
         });
 
-        // TODO - calculate average, change to moving average
+        // TODO - calculate average, change to moving average/waited average
         get("/wait_time/:precinct", (req, res) -> {
-            res.status(HTTP_OK);
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            res.type("application/json");
-            return dataToJson(voteService.getWaitTime(p));
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                res.type("application/json");
+                res.status(HTTP_OK);
+                return dataToJson(voteService.getWaitTime(p));
+            } catch (Exception e) {
+                LOG.error(e.toString());
+                res.status(HTTP_OK);
+                return null;
+            }
         });
 
         // TODO - remove this, for debugging

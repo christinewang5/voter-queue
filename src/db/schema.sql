@@ -7,6 +7,7 @@ CREATE TABLE vote (
     precinct INT,
     startTime TIMESTAMP
 );
+
 -- contains the total wait time
 CREATE TABLE complete_vote (
     uuid uuid PRIMARY KEY,
