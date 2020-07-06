@@ -31,7 +31,8 @@ public class VoteService {
         }
     }
 
-    public void endVote(UUID uuid, int precinct) throws Exception {
+    public long endVote(UUID uuid, int precinct) throws Exception {
+        long waitTime=0;
         try (Connection conn = sql2o.beginTransaction()) {
             List<VoteModel> voteModels = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
                     .addParameter("uuid", uuid)
@@ -39,9 +40,8 @@ public class VoteService {
             if (voteModels.isEmpty()) throw new Exception("No check in data. Failed to checkout.");
             Date startTime = voteModels.get(0).getStartTime();
             long waitTimeInMs = new Date().getTime() - startTime.getTime();
-            long waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
-//            System.out.printf("startTime: %d\n", startTime.getTime());
-//            System.out.printf("waitTime: %d\n", waitTime);
+            waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
+            System.out.printf("waitTime: %d\n", waitTime);
             conn.createQuery("INSERT INTO complete_vote(uuid, precinct, waitTime) VALUES (:uuid, :precinct, :waitTime)")
                     .addParameter("uuid", uuid)
                     .addParameter("precinct", precinct)
@@ -49,7 +49,7 @@ public class VoteService {
                     .executeUpdate();
             conn.commit();
         }
-        return;
+        return waitTime;
     }
 
     public Integer getWaitTime(int precinct) throws Exception{

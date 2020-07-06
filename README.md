@@ -3,3 +3,4 @@
 * postgres - database 
 * Lombok - library for getters/setters
 * Jackson  - JSON parsing library 
+* ZXing - library for QR codes
