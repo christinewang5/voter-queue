@@ -11,48 +11,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7dfebd70-5abd-4386-82b6-ec081d94f840" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_jai_imageio_jai_imageio_core_1_4_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_zxing_core_3_4_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_zxing_javase_3_4_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_sparkjava_spark_core_2_9_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_client_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_http_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_io_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_security_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_server_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_servlet_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_util_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_webapp_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_xml_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_api_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_client_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_common_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_server_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_servlet_9_4_30_v20200611.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/christinewang/QRLib.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sparkjava_spark_core_2_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_client_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_http_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_io_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_security_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_server_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_servlet_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_util_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_webapp_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_xml_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_api_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_client_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_common_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_server_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_websocket_websocket_servlet_9_4_18_v20190429.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/voter-queue.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/voter-queue.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/christinewang/QRLibTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/christinewang/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/christinewang/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/christinewang/VoteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/christinewang/VoteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/christinewang/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/christinewang/Controller.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/christinewang/VoteService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/christinewang/VoteService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/christinewang/QRLib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/christinewang/QRLib.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/christinewang/Controller$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/christinewang/Controller$1.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +31,13 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="https://github.com/christinewang5/voter-queue.git" />
+      </set>
+    </option>
   </component>
   <component name="MavenRunner">
     <option name="skipTests" value="true" />
@@ -102,8 +71,8 @@
       <command value="mvn " />
     </option>
   </component>
-  <component name="RunManager">
-    <configuration name="Controller" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.QR_Test">
+    <configuration name="Controller" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="openjdk-14" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.christinewang.Controller" />
@@ -118,11 +87,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.Controller" />
-      </list>
-    </recent_temporary>
+    <configuration name="QR_Test" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.christinewang.QRLibTest" />
+      <module name="voter-queue" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.QR_Test" />
+      <item itemvalue="Application.Controller" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -135,6 +110,14 @@
       <option name="presentableId" value="Default" />
       <updated>1591472170595</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added QR code functionality.">
+      <created>1593992879120</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1593992879121</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -149,19 +132,27 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added QR code functionality." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added QR code functionality." />
+  </component>
   <component name="WindowStateProjectService">
     <state x="762" y="175" key="#Controller" timestamp="1593453294053">
       <screen x="0" y="23" width="1792" height="1097" />
     </state>
     <state x="762" y="175" key="#Controller/0.23.1792.1097@0.23.1792.1097" timestamp="1593453294053" />
+    <state x="218" y="20" key="#ControllerTest" timestamp="1594015180602">
+      <screen x="0" y="0" width="1280" height="800" />
+    </state>
+    <state x="218" y="20" key="#ControllerTest/0.0.1280.800@0.0.1280.800" timestamp="1594015180602" />
     <state x="600" y="152" key="#Project_Structure" timestamp="1593453367261">
       <screen x="0" y="23" width="1792" height="1097" />
     </state>
     <state x="600" y="152" key="#Project_Structure/0.23.1792.1097@0.23.1792.1097" timestamp="1593453367261" />
-    <state x="209" y="124" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593966104209">
+    <state x="209" y="124" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594009266156">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state x="209" y="124" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.800@0.0.1280.800" timestamp="1593966104209" />
+    <state x="209" y="124" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.800@0.0.1280.800" timestamp="1594009266156" />
     <state x="360" y="233" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1792.1097@0.23.1792.1097" timestamp="1593453568601" />
     <state x="709" y="254" key="#com.intellij.ide.util.MemberChooser" timestamp="1591474073017">
       <screen x="0" y="23" width="1792" height="1020" />
@@ -182,39 +173,43 @@
     </state>
     <state x="271" y="193" key="DBNavigator.ProjectSettingsDialog/0.23.1792.1017@0.23.1792.1017" timestamp="1591473045839" />
     <state x="271" y="206" key="DBNavigator.ProjectSettingsDialog/0.23.1792.1097@0.23.1792.1097" timestamp="1593449265848" />
-    <state width="1398" height="203" key="GridCell.Tab.0.bottom" timestamp="1593988899931">
-      <screen x="-46" y="-900" width="1440" height="900" />
+    <state width="1238" height="175" key="GridCell.Tab.0.bottom" timestamp="1594015510243">
+      <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.bottom/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593988899931" />
-    <state width="1238" height="212" key="GridCell.Tab.0.bottom/0.0.1280.800@0.0.1280.800" timestamp="1593966233887" />
+    <state width="1398" height="203" key="GridCell.Tab.0.bottom/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593992696493" />
+    <state width="1238" height="175" key="GridCell.Tab.0.bottom/0.0.1280.800@0.0.1280.800" timestamp="1594015510243" />
     <state width="1218" height="203" key="GridCell.Tab.0.bottom/0.23.1280.733@0.23.1280.733" timestamp="1593968753314" />
+    <state width="1398" height="203" key="GridCell.Tab.0.bottom/0.23.1280.777/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593993564715" />
     <state width="1670" height="277" key="GridCell.Tab.0.bottom/0.23.1792.1017@0.23.1792.1017" timestamp="1591485197926" />
     <state width="1670" height="277" key="GridCell.Tab.0.bottom/0.23.1792.1020@0.23.1792.1020" timestamp="1591481294619" />
     <state width="1750" height="303" key="GridCell.Tab.0.bottom/0.23.1792.1097@0.23.1792.1097" timestamp="1593456575529" />
-    <state width="1398" height="203" key="GridCell.Tab.0.center" timestamp="1593988899876">
-      <screen x="-46" y="-900" width="1440" height="900" />
+    <state width="1238" height="175" key="GridCell.Tab.0.center" timestamp="1594015510241">
+      <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.center/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593988899876" />
-    <state width="1238" height="212" key="GridCell.Tab.0.center/0.0.1280.800@0.0.1280.800" timestamp="1593966233886" />
+    <state width="1398" height="203" key="GridCell.Tab.0.center/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593992696491" />
+    <state width="1238" height="175" key="GridCell.Tab.0.center/0.0.1280.800@0.0.1280.800" timestamp="1594015510241" />
     <state width="1218" height="203" key="GridCell.Tab.0.center/0.23.1280.733@0.23.1280.733" timestamp="1593968753313" />
+    <state width="1398" height="203" key="GridCell.Tab.0.center/0.23.1280.777/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593993564713" />
     <state width="1670" height="277" key="GridCell.Tab.0.center/0.23.1792.1017@0.23.1792.1017" timestamp="1591485197925" />
     <state width="1670" height="277" key="GridCell.Tab.0.center/0.23.1792.1020@0.23.1792.1020" timestamp="1591481294618" />
     <state width="1750" height="303" key="GridCell.Tab.0.center/0.23.1792.1097@0.23.1792.1097" timestamp="1593456575528" />
-    <state width="1398" height="203" key="GridCell.Tab.0.left" timestamp="1593988899874">
-      <screen x="-46" y="-900" width="1440" height="900" />
+    <state width="1238" height="175" key="GridCell.Tab.0.left" timestamp="1594015510240">
+      <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.left/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593988899874" />
-    <state width="1238" height="212" key="GridCell.Tab.0.left/0.0.1280.800@0.0.1280.800" timestamp="1593966233885" />
+    <state width="1398" height="203" key="GridCell.Tab.0.left/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593992696490" />
+    <state width="1238" height="175" key="GridCell.Tab.0.left/0.0.1280.800@0.0.1280.800" timestamp="1594015510240" />
     <state width="1218" height="203" key="GridCell.Tab.0.left/0.23.1280.733@0.23.1280.733" timestamp="1593968753312" />
+    <state width="1398" height="203" key="GridCell.Tab.0.left/0.23.1280.777/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593993564710" />
     <state width="1670" height="277" key="GridCell.Tab.0.left/0.23.1792.1017@0.23.1792.1017" timestamp="1591485197924" />
     <state width="1670" height="277" key="GridCell.Tab.0.left/0.23.1792.1020@0.23.1792.1020" timestamp="1591481294617" />
     <state width="1750" height="303" key="GridCell.Tab.0.left/0.23.1792.1097@0.23.1792.1097" timestamp="1593456575528" />
-    <state width="1398" height="203" key="GridCell.Tab.0.right" timestamp="1593988899878">
-      <screen x="-46" y="-900" width="1440" height="900" />
+    <state width="1238" height="175" key="GridCell.Tab.0.right" timestamp="1594015510242">
+      <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.right/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593988899878" />
-    <state width="1238" height="212" key="GridCell.Tab.0.right/0.0.1280.800@0.0.1280.800" timestamp="1593966233886" />
+    <state width="1398" height="203" key="GridCell.Tab.0.right/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593992696492" />
+    <state width="1238" height="175" key="GridCell.Tab.0.right/0.0.1280.800@0.0.1280.800" timestamp="1594015510242" />
     <state width="1218" height="203" key="GridCell.Tab.0.right/0.23.1280.733@0.23.1280.733" timestamp="1593968753314" />
+    <state width="1398" height="203" key="GridCell.Tab.0.right/0.23.1280.777/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593993564714" />
     <state width="1670" height="277" key="GridCell.Tab.0.right/0.23.1792.1017@0.23.1792.1017" timestamp="1591485197925" />
     <state width="1670" height="277" key="GridCell.Tab.0.right/0.23.1792.1020@0.23.1792.1020" timestamp="1591481294618" />
     <state width="1750" height="303" key="GridCell.Tab.0.right/0.23.1792.1097@0.23.1792.1097" timestamp="1593456575529" />
@@ -226,9 +221,14 @@
       <screen x="0" y="23" width="1792" height="1017" />
     </state>
     <state x="235" y="170" key="SettingsEditor/0.23.1792.1017@0.23.1792.1017" timestamp="1591472951590" />
-    <state x="943" y="492" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1593439741579">
-      <screen x="0" y="23" width="1792" height="1097" />
+    <state x="274" y="-710" key="Vcs.Push.Dialog.v2" timestamp="1593992893574">
+      <screen x="-46" y="-900" width="1440" height="900" />
     </state>
+    <state x="274" y="-710" key="Vcs.Push.Dialog.v2/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593992893574" />
+    <state x="712" y="-515" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1593993128584">
+      <screen x="-46" y="-900" width="1440" height="900" />
+    </state>
+    <state x="712" y="-515" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.800/-46.-900.1440.900@-46.-900.1440.900" timestamp="1593993128584" />
     <state x="943" y="492" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1792.1097@0.23.1792.1097" timestamp="1593439741579" />
     <state x="557" y="164" width="598" height="735" key="find.popup" timestamp="1592783015634">
       <screen x="0" y="23" width="1792" height="1097" />

@@ -19,9 +19,9 @@ import java.util.Base64;
 public class QRLib {
     //Most Strings will be in UTF-8.
     private static final String STANDARD_CHARSET = "UTF-8";
-    //These can be fine-tuned, I'm just setting them to 115 for now.
-    private static final int STANDARD_WIDTH = 115;
-    private static final int STANDARD_HEIGHT = 115;
+    //These can be fine-tuned, I'm just setting them to 250 for now.
+    private static final int STANDARD_WIDTH = 250;
+    private static final int STANDARD_HEIGHT = 250;
     //We want a PNG for the HTML to render it.
     private static final String STANDARD_FORMAT = "png";
     //This specifies a standard black-on-white QR code.
