@@ -100,7 +100,7 @@ public class Controller {
                 return dataToJson(voteService.getWaitTime(p));
             } catch (Exception e) {
                 LOG.error(e.toString());
-                res.status(HTTP_OK);
+                res.status(HTTP_BAD_REQUEST);
                 return null;
             }
         });
@@ -127,63 +127,99 @@ public class Controller {
         });
 
         get("/get_QR_start/:precinct",(req, res) -> {
-            res.status(HTTP_OK);
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            String baseUrl = WEB_HOST+":"+WEB_PORT+"/start_vote/";
-            String QR_embed = getQR(p, baseUrl, true);
-            return QR_embed;
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
+                String QR_embed = getQR(p, baseUrl, true);
+                res.status(HTTP_OK);
+                return QR_embed;
+            } catch (Exception e){
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
+            }
         });
 
         get("/get_QR_end/:precinct",(req, res) -> {
-            res.status(HTTP_OK);
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            String baseUrl = WEB_HOST+":"+WEB_PORT+"/end_vote/";
-            String QR_embed = getQR(p, baseUrl, true);
-            return QR_embed;
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
+                String QR_embed = getQR(p, baseUrl, true);
+                res.status(HTTP_OK);
+                return QR_embed;
+            } catch (Exception e) {
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
+            }
         });
 
         get("/get_QR_wait/:precinct",(req, res) -> {
-            res.status(HTTP_OK);
-            String precinct = req.params(":precinct");
-            int p = Integer.parseInt(precinct);
-            String baseUrl = WEB_HOST+":"+WEB_PORT+"/wait_time/";
-            String QR_embed = getQR(p, baseUrl, true);
-            return QR_embed;
+            try {
+                String precinct = req.params(":precinct");
+                int p = Integer.parseInt(precinct);
+                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/wait_time/";
+                String QR_embed = getQR(p, baseUrl, true);
+                res.status(HTTP_OK);
+                return QR_embed;
+            } catch (Exception e){
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
+            }
         });
 
         get("/all_QR_start", (req, res) -> {
-            res.status(HTTP_OK);
-            String baseURL = WEB_HOST+":"+WEB_PORT+"/start_vote/";
-            String accumulateAll="";
-            for (int p=MIN_PRECINCT;p<=MAX_PRECINCT;p++){
-                accumulateAll += "<p><strong>QR start code for precinct "+p+"</strong><p>";
-                accumulateAll += getQR(p, baseURL, true);
+            try {
+                String baseURL = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
+                String accumulateAll = "";
+                for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
+                    accumulateAll += "<p><strong>QR start code for precinct " + p + "</strong><p>";
+                    accumulateAll += getQR(p, baseURL, true);
+                }
+                res.status(HTTP_OK);
+                return accumulateAll;
+            } catch (Exception e){
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
             }
-            return accumulateAll;
         });
 
         get("/all_QR_end", (req, res) -> {
-            res.status(HTTP_OK);
-            String baseURL = WEB_HOST+":"+WEB_PORT+"/end_vote/";
-            String accumulateAll="";
-            for (int p=MIN_PRECINCT;p<=MAX_PRECINCT;p++){
-                accumulateAll += "<p><strong>QR end code for precinct "+p+"</strong><p>";
-                accumulateAll += getQR(p, baseURL, true);
+            try {
+                String baseURL = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
+                String accumulateAll = "";
+                for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
+                    accumulateAll += "<p><strong>QR end code for precinct " + p + "</strong><p>";
+                    accumulateAll += getQR(p, baseURL, true);
+                }
+                res.status(HTTP_OK);
+                return accumulateAll;
+            } catch (Exception e){
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
             }
-            return accumulateAll;
         });
 
         get("/all_QR_wait", (req, res) -> {
-            res.status(HTTP_OK);
-            String baseURL = WEB_HOST+":"+WEB_PORT+"/wait_time/";
-            String accumulateAll="";
-            for (int p=MIN_PRECINCT;p<=MAX_PRECINCT;p++){
-                accumulateAll += "<p><strong>QR wait code for precinct "+p+"</strong><p>";
-                accumulateAll += getQR(p, baseURL, true);
+            try {
+                String baseURL = WEB_HOST + ":" + WEB_PORT + "/wait_time/";
+                String accumulateAll = "";
+                for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
+                    accumulateAll += "<p><strong>QR wait code for precinct " + p + "</strong><p>";
+                    accumulateAll += getQR(p, baseURL, true);
+                }
+                res.status(HTTP_OK);
+                return accumulateAll;
+            } catch (Exception e){
+                LOG.error(e.toString());
+                res.status(HTTP_BAD_REQUEST);
+                return null;
             }
-            return accumulateAll;
         });
     }
 
