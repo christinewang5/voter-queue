@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
+import spark.servlet.SparkApplication;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import static spark.Spark.staticFiles;
 public class Controller {
     private static final int HTTP_OK = 200;
     private static final int HTTP_BAD_REQUEST = 400;
+    private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
 
     public static void main(String[] args) {
@@ -48,10 +50,10 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 UUID uuid = voteService.startVote(p);
-                res.cookie("/", "uuid", uuid.toString(), 3600, false, true);
+                res.cookie("/", "uuid", uuid.toString(), TIME_IN_DAY_IN_S, false, true);
                 res.type("application/json");
                 res.status(HTTP_OK);
-                return uuid;
+                return "Thanks for checking in! Remember to check out at the end";
             } catch (Exception e) {
                 LOG.error(e.toString());
                 res.status(HTTP_BAD_REQUEST);
@@ -68,10 +70,10 @@ public class Controller {
                 voteService.endVote(UUID.fromString(cookie), p);
                 res.type("application/json");
                 res.status(HTTP_OK);
-                return "Thanks for checking in!";
+                return "Thanks for completing the check-in process! :)";
             } catch (Exception e) {
                 LOG.error(e.toString());
-                res.status(HTTP_OK);
+                res.status(HTTP_BAD_REQUEST);
                 return null;
             }
         });

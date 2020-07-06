@@ -57,7 +57,7 @@ public class VoteService {
             List<Integer> waitTime = conn.createQuery("SELECT AVG(waitTime) FROM complete_vote WHERE precinct=:precinct")
                     .addParameter("precinct", precinct)
                     .executeAndFetch(Integer.class);
-            if (waitTime.isEmpty()) throw new Exception("No data for precinct precinct");
+            if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
             return waitTime.get(0);
         }
     }
