@@ -6,13 +6,14 @@ import java.util.Date;
 import java.util.UUID;
 
 @Data
-public class VoteModel {
+public class VoteCompleteModel {
     private UUID uuid;
     private int precinct;
-    private Date startTime;
+    private int waitTime; //Wait time in minutes.
 
-    public Date getStartTime() {
-        return startTime;
+    public int getWaitTime() {
+        return waitTime;
     }
     public UUID getUUID(){ return uuid;}
+
 }

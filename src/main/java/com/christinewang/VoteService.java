@@ -63,10 +63,10 @@ public class VoteService {
     }
 
     // TODO - remove this later, for debugging
-    public List<VoteModel> getAllCompleteVotes() {
+    public List<VoteCompleteModel> getAllCompleteVotes() {
         try (Connection conn = sql2o.beginTransaction()) {
-            List<VoteModel> votes = conn.createQuery("SELECT * FROM complete_vote")
-                    .executeAndFetch(VoteModel.class);
+            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM complete_vote")
+                    .executeAndFetch(VoteCompleteModel.class);
             conn.commit();
             return votes;
         }

@@ -11,6 +11,7 @@ import org.sql2o.quirks.PostgresQuirks;
 import spark.servlet.SparkApplication;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static com.christinewang.QRLib.createQR_b64;
@@ -76,11 +77,20 @@ public class Controller {
                 int p = Integer.parseInt(precinct);
                 String cookie = req.cookie("uuid");
                 System.out.println(cookie);
+                res.type("application/json");
                 if (cookie==null){
+                    res.status(HTTP_OK);
                     return "Go to the start_vote page to get a cookie first!";
                 }
+                if (isInvalid(UUID.fromString(cookie),voteService)){
+                    res.status(HTTP_OK);
+                    return "Oops! Looks like you have an invalid UUID.\nGo to the start_vote page to get a valid one.";
+                }
+                if (hasAlreadyVoted(UUID.fromString(cookie),voteService)){
+                    res.status(HTTP_OK);
+                    return "You've already been recorded. Thanks for checking in again, though!";
+                }
                 String waitTime = String.valueOf(voteService.endVote(UUID.fromString(cookie), p));
-                res.type("application/json");
                 res.status(HTTP_OK);
                 return "Thanks for checking in! You waited "+waitTime+" minutes!";
             } catch (Exception e) {
@@ -252,5 +262,34 @@ public class Controller {
             html_img += "<br>";
         }
         return html_img;
+    }
+
+    /** Checks if a given UUID has already been recorded as complete.
+     * @author John Berberian
+     * @param uuid The UUID to check.
+     * @param voteService The VoteService connected to the voter-queue database.
+     * @return True if uuid has already voted, false if not.
+     * */
+    public static boolean hasAlreadyVoted(UUID uuid, VoteService voteService){
+        for (VoteCompleteModel v : voteService.getAllCompleteVotes()) {
+            if (v.getUUID().equals(uuid)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Checks if a given UUID does not appear in the table "vote".
+     * @param uuid The UUID to search for.
+     * @param voteService The VoteService connected to the voter-queue database.
+     * @return False if the uuid appears in "vote" (it's valid), true if not (it's invalid).
+     * */
+    public static boolean isInvalid(UUID uuid, VoteService voteService){
+        for (VoteModel v : voteService.getAllVotes()){
+            if (v.getUUID().equals(uuid)){
+                return false;
+            }
+        }
+        return true;
     }
 }
