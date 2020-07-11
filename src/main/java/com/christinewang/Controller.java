@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.zxing.WriterException;
+
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
@@ -13,7 +13,7 @@ import spark.servlet.SparkApplication;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.christinewang.QRLib.createQR_b64;
+import static com.christinewang.QRLib.*;
 import static spark.Spark.get;
 import static spark.Spark.staticFiles;
 
@@ -28,8 +28,8 @@ public class Controller {
     private static final int HTTP_BAD_REQUEST = 400;
     private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
-    private static final String WEB_HOST = "localhost";
-    private static final int WEB_PORT = 4567;
+    public static final String WEB_HOST = "localhost";
+    public static final int WEB_PORT = 4567;
     private static final int MIN_PRECINCT = 0;
     //Set to 10 for testing purposes, will be set to real value later.
     private static final int MAX_PRECINCT = 10;
@@ -131,7 +131,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
-                String QR_embed = getQR(p, baseUrl, true);
+                String QR_embed = getStart_Printout(p,baseUrl);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e){
@@ -146,7 +146,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
-                String QR_embed = getQR(p, baseUrl, true);
+                String QR_embed = getEnd_Printout(p,baseUrl);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e) {
@@ -173,12 +173,8 @@ public class Controller {
 
         get("/all_QR_start", (req, res) -> {
             try {
-                String baseURL = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
-                String accumulateAll = "";
-                for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
-                    accumulateAll += "<p><strong>QR start code for precinct " + p + "</strong><p>";
-                    accumulateAll += getQR(p, baseURL, true);
-                }
+                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
+                String accumulateAll = getStart_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
                 res.status(HTTP_OK);
                 return accumulateAll;
             } catch (Exception e){
@@ -190,12 +186,8 @@ public class Controller {
 
         get("/all_QR_end", (req, res) -> {
             try {
-                String baseURL = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
-                String accumulateAll = "";
-                for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
-                    accumulateAll += "<p><strong>QR end code for precinct " + p + "</strong><p>";
-                    accumulateAll += getQR(p, baseURL, true);
-                }
+                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
+                String accumulateAll = getEnd_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
                 res.status(HTTP_OK);
                 return accumulateAll;
             } catch (Exception e){
@@ -232,25 +224,5 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException("IOException from a StringWriter?");
         }
-    }
-    /** Returns an HTML img QR code for urlBase/precinct.
-     * @author John Berberian
-     * @param precinct The precinct that the QR code should be for.
-     * @param urlBase The base URL, such that the final url is "urlBase/precinct".
-     * @param hasBreak Specifies whether or not the image should be followed by a br.
-     * @return HTML img string of base64-encoded QR code of "urlBase/precinct".
-     * */
-    public static String getQR(int precinct, String urlBase, boolean hasBreak)
-            throws IOException, WriterException {
-        if (urlBase.charAt(urlBase.length()-1)!='/'){
-            urlBase += "/";
-        }
-        String full_URL = urlBase+precinct;
-        String b64_enc = createQR_b64(full_URL);
-        String html_img = "<img src=\"data:image/png;base64,"+b64_enc+"\" alt=\"QR code for precinct "+precinct+"\">";
-        if (hasBreak){
-            html_img += "<br>";
-        }
-        return html_img;
     }
 }
