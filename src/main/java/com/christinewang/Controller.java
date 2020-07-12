@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
-import spark.servlet.SparkApplication;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,6 +35,7 @@ public class Controller {
     private static final int MAX_PRECINCT = 10;
 
     public static void main(String[] args) {
+        // Set up database
         String dbHost = "localhost";
         int dbPort = 5432;
         String database = "voter_queue";
@@ -124,13 +124,6 @@ public class Controller {
             res.status(HTTP_OK);
             res.type("application/json");
             return dataToJson(voteService.getAllCompleteVotes());
-        });
-
-        // TODO - create QR code front end
-        get("/create", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllVotes());
         });
 
         get("/get_QR_start/:precinct",(req, res) -> {
