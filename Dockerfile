@@ -1,14 +1,11 @@
-# Build stage
-#
-FROM maven:3.6.0-jdk-11-slim AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
+FROM java:8-jdk-alpine
+COPY ./target/voter-queue-1.0-SNAPSHOT-jar-with-dependencies.jar /usr/app/
+WORKDIR /usr/app
+EXPOSE 7000
+ENTRYPOINT ["java", "-jar", "voter-queue-1.0-SNAPSHOT-jar-with-dependencies.jar"]
 
-#
-# Package stage
-#
-FROM openjdk:11-jre-slim
-COPY --from=build /home/app/target/demo-0.0.1-SNAPSHOT.jar /usr/local/lib/demo.jar
-EXPOSE 4567
-ENTRYPOINT ["java","-jar","/usr/local/lib/demo.jar"]
+
+## RUN THE FOLLOWING COMMANDS
+# mvn clean compile assembly:single
+# docker build -t voter-queue .
+# docker run --rm -it voter-queue:latest
