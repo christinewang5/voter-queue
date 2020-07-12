@@ -32,7 +32,7 @@ public class VoteService {
     }
 
     public long endVote(UUID uuid, int precinct) throws Exception {
-        long waitTime=0;
+        long waitTime = 0;
         try (Connection conn = sql2o.beginTransaction()) {
             List<VoteModel> voteModels = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
                     .addParameter("uuid", uuid)
