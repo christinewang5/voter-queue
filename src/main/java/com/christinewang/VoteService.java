@@ -80,4 +80,33 @@ public class VoteService {
             return votes;
         }
     }
+
+    /** A method to get all votes for a given precinct.
+     * @author John Berberian
+     * @param precinct The precinct in question, by number.
+     * @return A List of VoteModel, representing the votes for the precinct
+     * */
+    public List<VoteModel> getPrecinctVotes(int precinct) {
+        try (Connection conn = sql2o.open()) {
+            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE precinct=:precinct")
+                    .addParameter("precinct", precinct)
+                    .executeAndFetch(VoteModel.class);
+            return votes;
+        }
+    }
+
+    /** A method to get all complete votes for a given precinct.
+     * @author John Berberian
+     * @param precinct The precinct in question, by number.
+     * @return A List of VoteCompleteModel, representing
+     *             the complete votes for the precinct
+     * */
+    public List<VoteCompleteModel> getPrecinctCompleteVotes(int precinct) {
+        try (Connection conn = sql2o.open()) {
+            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM comlete_vote WHERE precinct=:precinct")
+                    .addParameter("precinct", precinct)
+                    .executeAndFetch(VoteCompleteModel.class);
+            return votes;
+        }
+    }
 }

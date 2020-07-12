@@ -86,58 +86,105 @@ public class QRLib {
      * @author John Berberian
      * @param precinct The precinct that the QR code should be for.
      * @param urlBase The base URL, such that the final url is "urlBase/precinct".
-     * @param hasBreak Specifies whether or not the image should be followed by a br.
+     * @param hasBreak Specifies whether or not the image should be followed by a br tag.
      * @return HTML img string of base64-encoded QR code of "urlBase/precinct".
      * */
     public static String getQR(int precinct, String urlBase, boolean hasBreak)
             throws IOException, WriterException {
+        //If urlBase doesn't end in a slash...
         if (urlBase.charAt(urlBase.length()-1)!='/'){
+            //...make sure it does.
             urlBase += "/";
         }
+        //Concat the urlBase and precinct, to get the full url.
         String full_URL = urlBase+precinct;
+        //And get the base64 QR string for it.
         String b64_enc = createQR_b64(full_URL);
+        //Wrap this in an html tag.
         String html_img = "<img src=\"data:image/png;base64,"+b64_enc+"\" alt=\"QR code for precinct "+precinct+"\">\n";
+        //Allow the user to specify if we want a line break at the end.
         if (hasBreak){
             html_img += "<br>";
         }
+        //Return our string.
         return html_img;
     }
 
+    /** Returns a single start-QR page.
+     * @author John Berberian
+     * @param precinct The precinct the QR should be for.
+     * @param urlBase The base url for a start-vote.
+     * @return An HTML page, ready to be handed to Spark.
+     * */
     public static String getStart_Printout(int precinct, String urlBase)
             throws IOException, WriterException {
+        //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_Start_FirstHalf+
                 getQR(precinct, urlBase, false)+
                 HTMLBase.Printout_Start_SecondHalf+HTMLBase.Printout_Foot;
     }
 
+    /** Returns a single end-QR page.
+     * @author John Berberian
+     * @param precinct The precinct the QR should be for.
+     * @param urlBase The base url for an end-vote.
+     * @return An HTML page, ready to be handed to Spark.
+     * */
     public static String getEnd_Printout(int precinct, String urlBase)
             throws IOException, WriterException {
+        //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_End_FirstHalf+
                 getQR(precinct, urlBase, false)+
                 HTMLBase.Printout_End_SecondHalf+HTMLBase.Printout_Foot;
     }
 
+    /** Gets a multi-page QR start poster for the precincts specified.
+     * @author John Berberian
+     * @param startPrecinct The starting precinct number.
+     * @param endPrecinct The ending precinct number. All ints between this
+     *                    and startPrecinct will be used as precinct nums.
+     * @param urlBase The base url for a start-vote.
+     * @return An HTML page, ready to be handed to spark and printed multi-page.
+     * */
     public static String getStart_Printouts(int startPrecinct, int endPrecinct, String urlBase)
             throws IOException, WriterException {
+        //Start off with the header (css links, etc)
         String bigPage = HTMLBase.Printout_Head;
+        //For each of our precincts in question...
         for (int i=startPrecinct;i<=endPrecinct;i++){
+            //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_Start_FirstHalf+
                     getQR(i, urlBase, false)+
                     HTMLBase.Printout_Start_SecondHalf;
         }
+        //And add our wonderful footer, which is nothing at the moment.
         bigPage += HTMLBase.Printout_Foot;
+        //And we're done! Let's return.
         return bigPage;
     }
 
+    /** Gets a multi-page QR end poster for the precincts specified.
+     * @author John Berberian
+     * @param startPrecinct The starting precinct number.
+     * @param endPrecinct The ending precinct number. All ints between this
+     *                    and startPrecinct will be used as precinct nums.
+     * @param urlBase The base url for an end-vote.
+     * @return An HTML page, ready to be handed to spark and printed multi-page.
+     * */
     public static String getEnd_Printouts(int startPrecinct, int endPrecinct, String urlBase)
             throws IOException, WriterException {
+        //Start off with the header (css links, etc)
         String bigPage = HTMLBase.Printout_Head;
+        //For each of our precincts in question...
         for (int i=startPrecinct;i<=endPrecinct;i++){
+            //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_End_FirstHalf+
                     getQR(i, urlBase, false)+
                     HTMLBase.Printout_End_SecondHalf;
         }
+        //And add our wonderful footer, which is nothing at the moment.
         bigPage += HTMLBase.Printout_Foot;
+        //And we're done! Let's return.
         return bigPage;
     }
 }

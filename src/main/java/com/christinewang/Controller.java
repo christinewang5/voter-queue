@@ -11,6 +11,7 @@ import org.sql2o.quirks.PostgresQuirks;
 import spark.servlet.SparkApplication;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static com.christinewang.QRLib.*;
@@ -62,7 +63,7 @@ public class Controller {
                 res.cookie("/", "uuid", uuid.toString(), TIME_IN_DAY_IN_S, false, true);
                 res.type("application/json");
                 res.status(HTTP_OK);
-                return "Thanks for checking in! Remember to check out at the end";
+                return "Thanks for checking in! Remember to check out at the end.";
             } catch (Exception e) {
                 LOG.error(e.toString());
                 res.status(HTTP_BAD_REQUEST);
@@ -76,13 +77,19 @@ public class Controller {
                 int p = Integer.parseInt(precinct);
                 String cookie = req.cookie("uuid");
                 System.out.println(cookie);
+                res.status(HTTP_OK);
                 if (cookie==null){
                     return "Go to the start_vote page to get a cookie first!";
                 }
+                if (! isValid(UUID.fromString(cookie),voteService,p)){
+                    return "You seem to have an invalid cookie for this precinct.";
+                }
+                if (hasAlreadyVoted(UUID.fromString(cookie),voteService)) {
+                    return "You've already visited this page.";
+                }
                 String waitTime = String.valueOf(voteService.endVote(UUID.fromString(cookie), p));
                 res.type("application/json");
-                res.status(HTTP_OK);
-                return "Thanks for checking in! You waited "+waitTime+" minutes!";
+                return "Thanks for checking in! You waited "+waitTime+" minute(s)!";
             } catch (Exception e) {
                 LOG.error(e.toString());
                 res.status(HTTP_BAD_REQUEST);
@@ -224,5 +231,46 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException("IOException from a StringWriter?");
         }
+    }
+
+    /** Check if a uuid is valid to be ended for a given precinct.
+     * @author John Berberian
+     * @param uuid The uuid to check.
+     * @param voteService The VoteService connected to the voter_queue database.
+     * @param precinct The precinct to check in.
+     * @return True if the uuid is valid, false if not.
+     * */
+    public static boolean isValid(UUID uuid, VoteService voteService, int precinct) {
+        //Get all the votes (valid uuids) for that precinct
+        List<VoteModel> votes = voteService.getPrecinctVotes(precinct);
+        //Search through them...
+        for (VoteModel v : votes) {
+            //...and if the input uuid matches one, it is valid.
+            if (uuid.equals(v.getUUID())) {
+                return true;
+            }
+        }
+        //Otherwise, it is invalid.
+        return false;
+    }
+
+    /** Check if a uuid has already been used to end a vote.
+     * @author John Berberian
+     * @param uuid The uuid to check.
+     * @param voteService The VoteService connected to the voter_queue database.
+     * @return True if the uuid has already been used, false if not.
+     * */
+    public static boolean hasAlreadyVoted(UUID uuid, VoteService voteService) {
+        //Get all the complete votes.
+        List<VoteCompleteModel> votes = voteService.getAllCompleteVotes();
+        //Search through them...
+        for (VoteCompleteModel v : votes) {
+            //...and if the input uuid matches one, it's already been used.
+            if (uuid.equals(v.getUUID())) {
+                return true;
+            }
+        }
+        //Otherwise, it's free.
+        return false;
     }
 }
