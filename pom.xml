@@ -122,7 +122,7 @@
             </descriptorRefs>
             <archive>
               <manifest>
-                <mainClass>com.christinewang.JavalinController</mainClass>
+                <mainClass>com.christinewang.Application</mainClass>
               </manifest>
             </archive>
           </configuration>
