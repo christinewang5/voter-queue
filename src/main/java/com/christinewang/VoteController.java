@@ -11,7 +11,7 @@ import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.HTTP_OK;
 import static com.christinewang.Application.HTTP_BAD_REQUEST;
-import static com.christinewang.Controller.dataToJson;
+import static com.christinewang.Controller.*;
 
 
 // TODO - add test
@@ -57,7 +57,7 @@ public class VoteController {
 
     public static Handler waitTimeHandler = ctx -> {
         try {
-            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i > 0 && i < 10).get();
+            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             String waitTime = dataToJson(voteService.getWaitTime(precinct));
             if (waitTime==null || waitTime.equals("null")){
                 ctx.status(HTTP_OK);
