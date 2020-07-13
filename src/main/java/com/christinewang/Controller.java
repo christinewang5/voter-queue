@@ -106,7 +106,11 @@ public class Controller {
                 int p = Integer.parseInt(precinct);
                 res.type("application/json");
                 res.status(HTTP_OK);
-                return dataToJson(voteService.getWaitTime(p));
+                String waitTime = dataToJson(voteService.getWaitTime(p));
+                if (waitTime == null || waitTime.equals("null")){
+                    return "We currently have no data for that precinct.";
+                }
+                return "The wait time for that precinct is "+waitTime+" minutes.";
             } catch (Exception e) {
                 LOG.error(e.toString());
                 res.status(HTTP_BAD_REQUEST);
@@ -251,7 +255,7 @@ public class Controller {
                 return true;
             }
         }
-        //Otherwise, it's free.
+        //Otherwise, it's still available.
         return false;
     }
 }

@@ -3,7 +3,7 @@ package com.christinewang;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
-import sun.rmi.runtime.Log;
+//import sun.rmi.runtime.Log;
 
 import java.net.URI;
 import java.net.URISyntaxException;
