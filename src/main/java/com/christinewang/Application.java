@@ -5,9 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 
+import static com.christinewang.QRLib.getEnd_Printouts;
+import static com.christinewang.QRLib.getQR;
+import static com.christinewang.QRLib.getStart_Printouts;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 import io.javalin.plugin.rendering.vue.VueComponent;
+import spark.Spark;
 
 /**
  * Controller for the Voter Queue App.
