@@ -18,14 +18,16 @@ import static spark.Spark.get;
 import static spark.Spark.staticFiles;
 
 /**
+ * NOTE - will be deprecated
+ *
  * Controller for the Voter Queue App.
  * Contains all the routes.
  * @author Christine Wang
  * @author John B.
  */
 public class Controller {
-    private static final int HTTP_OK = 200;
-    private static final int HTTP_BAD_REQUEST = 400;
+    public static final int HTTP_OK = 200;
+    public static final int HTTP_BAD_REQUEST = 400;
     private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
     public static final String WEB_HOST = "localhost";
@@ -110,20 +112,6 @@ public class Controller {
                 res.status(HTTP_BAD_REQUEST);
                 return null;
             }
-        });
-
-        // TODO - remove this, for debugging
-        get("/getAll", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllVotes());
-        });
-
-        // TODO - remove this, for debugging
-        get("/getComplete", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllCompleteVotes());
         });
 
         get("/get_QR_start/:precinct",(req, res) -> {

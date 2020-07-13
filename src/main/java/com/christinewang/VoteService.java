@@ -44,7 +44,6 @@ public class VoteService {
             Date startTime = voteModels.get(0).getStartTime();
             long waitTimeInMs = new Date().getTime() - startTime.getTime();
             waitTime = TimeUnit.MINUTES.convert(waitTimeInMs, TimeUnit.MILLISECONDS);
-            System.out.printf("waitTime: %d\n", waitTime);
             conn.createQuery("INSERT INTO complete_vote(uuid, precinct, waitTime) VALUES (:uuid, :precinct, :waitTime)")
                 .addParameter("uuid", uuid)
                 .addParameter("precinct", precinct)
@@ -89,7 +88,6 @@ public class VoteService {
         try (Connection conn = sql2o.open()) {
             List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT precinct, AVG(waitTime) AS waitTime FROM complete_vote GROUP BY precinct ORDER BY precinct")
                 .executeAndFetch(VoteCompleteModel.class);
-            LOG.info("waitTimes  -- " + waitTimes.toString() + "\n");
             return waitTimes;
         }
     }

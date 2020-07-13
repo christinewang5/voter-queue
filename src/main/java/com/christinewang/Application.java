@@ -18,6 +18,8 @@ import io.javalin.plugin.rendering.vue.VueComponent;
  */
 public class Application {
     public static Logger LOG = LoggerFactory.getLogger(Controller.class);
+    public static final int HTTP_OK = 200;
+    public static final int HTTP_BAD_REQUEST = 400;
     public static VoteService voteService;
 
     public static void main(String[] args) {
@@ -36,6 +38,16 @@ public class Application {
             get("/start_vote/:precinct", VoteController.startVoteHandler);
             get("/end_vote/:precinct", VoteController.endVoteHandler);
             get("/wait_time/:precinct", VoteController.waitTimeHandler);
+
+            get("/get_QR_start/:precinct", QRController.get_QR_startHandler);
+            get("/get_QR_end/:precinct", QRController.get_QR_endHandler);
+            get("/get_QR_wait/:precinct", QRController.get_QR_waitHandler);
+
+            get("/all_QR_start", QRController.all_QR_startHandler);
+            get("/all_QR_end", QRController.all_QR_endHandler);
+            get("/all_QR_wait", QRController.all_QR_waitHandler);
+
+
         });
 
         app.error(404, ctx -> ctx.result("Page does not exist."));
