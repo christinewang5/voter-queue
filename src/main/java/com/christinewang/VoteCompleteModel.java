@@ -9,9 +9,9 @@ import java.util.UUID;
 public class VoteCompleteModel {
     private UUID uuid;
     private int precinct;
-    private int waitTime; //Wait time in minutes.
+    private double waitTime; //Wait time in minutes.
 
-    public int getWaitTime() {
+    public double getWaitTime() {
         return waitTime;
     }
     public UUID getUUID(){ return uuid;}

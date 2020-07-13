@@ -7,10 +7,12 @@ import org.sql2o.Sql2o;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 
+import io.javalin.plugin.rendering.vue.VueComponent;
 
 /**
  * Controller for the Voter Queue App.
  * Contains all the routes.
+ *
  * @author Christine Wang
  * @author John B.
  */
@@ -22,10 +24,15 @@ public class Application {
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
 
-        Javalin app = Javalin.create().start(HerokuUtil.getHerokuAssignedPort());
+        Javalin app = Javalin.create(config -> {
+            config.enableWebjars();
+            config.addStaticFiles("/public");
+        })
+            .start(HerokuUtil.getHerokuAssignedPort());
 
         app.routes(() -> {
-            get("/", ctx -> ctx.result("Welcome to voter queue."));
+            get("/", new VueComponent("<wait-time-overview></wait-time-overview>"));
+            get("/api/wait_time_overview", VoteController.getWaitTimeOverview);
             get("/start_vote/:precinct", VoteController.startVoteHandler);
             get("/end_vote/:precinct", VoteController.endVoteHandler);
             get("/wait_time/:precinct", VoteController.waitTimeHandler);
@@ -33,6 +40,4 @@ public class Application {
 
         app.error(404, ctx -> ctx.result("Page does not exist."));
     }
-
-
 }
