@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
-import spark.servlet.SparkApplication;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,14 +18,16 @@ import static spark.Spark.get;
 import static spark.Spark.staticFiles;
 
 /**
+ * NOTE - will be deprecated
+ *
  * Controller for the Voter Queue App.
  * Contains all the routes.
  * @author Christine Wang
  * @author John B.
  */
 public class Controller {
-    private static final int HTTP_OK = 200;
-    private static final int HTTP_BAD_REQUEST = 400;
+    public static final int HTTP_OK = 200;
+    public static final int HTTP_BAD_REQUEST = 400;
     private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
     public static final String WEB_HOST = "localhost";
@@ -36,6 +37,7 @@ public class Controller {
     private static final int MAX_PRECINCT = 10;
 
     public static void main(String[] args) {
+        // Set up database
         String dbHost = "localhost";
         int dbPort = 5432;
         String database = "voter_queue";
@@ -110,27 +112,6 @@ public class Controller {
                 res.status(HTTP_BAD_REQUEST);
                 return null;
             }
-        });
-
-        // TODO - remove this, for debugging
-        get("/getAll", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllVotes());
-        });
-
-        // TODO - remove this, for debugging
-        get("/getComplete", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllCompleteVotes());
-        });
-
-        // TODO - create QR code front end
-        get("/create", (req, res) -> {
-            res.status(HTTP_OK);
-            res.type("application/json");
-            return dataToJson(voteService.getAllVotes());
         });
 
         get("/get_QR_start/:precinct",(req, res) -> {
