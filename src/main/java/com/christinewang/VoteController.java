@@ -11,6 +11,7 @@ import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.HTTP_OK;
 import static com.christinewang.Application.HTTP_BAD_REQUEST;
+import static com.christinewang.Controller.dataToJson;
 
 
 // TODO - add test
@@ -57,10 +58,15 @@ public class VoteController {
     public static Handler waitTimeHandler = ctx -> {
         try {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i > 0 && i < 10).get();
-            int waitTime = voteService.getWaitTime(precinct);
-            ctx.result(String.format("Wait Time For Precinct %d  - %d", precinct, waitTime));
-            ctx.status(HTTP_OK);
-            ctx.result("Wait Time For Precinct: " + precinct + voteService.getWaitTime(precinct) + " mins");
+            String waitTime = dataToJson(voteService.getWaitTime(precinct));
+            if (waitTime==null || waitTime.equals("null")){
+                ctx.status(HTTP_OK);
+                ctx.result(String.format("We have no data for precinct %d",precinct));
+            } else {
+                ctx.result(String.format("Wait Time For Precinct %d  - %s", precinct, waitTime));
+                ctx.status(HTTP_OK);
+                ctx.result("Wait Time For Precinct: " + precinct + voteService.getWaitTime(precinct) + " mins");
+            }
         } catch (Exception e) {
             LOG.error(e.toString());
             ctx.status(HTTP_BAD_REQUEST);
