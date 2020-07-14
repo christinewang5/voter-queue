@@ -11,7 +11,9 @@ import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.HTTP_OK;
 import static com.christinewang.Application.HTTP_BAD_REQUEST;
-import static com.christinewang.Controller.*;
+import static com.christinewang.QRController.MAX_PRECINCT;
+import static com.christinewang.QRController.MIN_PRECINCT;
+import static com.christinewang.HerokuUtil.*;
 
 
 // TODO - add test
@@ -19,7 +21,7 @@ public class VoteController {
 
     public static Handler startVoteHandler = ctx -> {
         try {
-            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i > 0 && i < 10).get();
+            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             UUID uuid = voteService.startVote(precinct);
             ctx.cookieStore("uuid", uuid);
             ctx.status(HTTP_OK);
@@ -38,17 +40,33 @@ public class VoteController {
 
     public static Handler endVoteHandler = ctx -> {
         try {
-            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i > 0 && i < 10).get();
+            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             String val = ctx.cookieStore("uuid");
             UUID uuid = UUID.fromString(val);
-            long waitTime = voteService.endVote(uuid, precinct);
-            ctx.result("Thanks for checking in! You waited " + waitTime + " minute(s)!");
-            ctx.status(HTTP_OK);
-            ctx.clearCookieStore();
+            if (val==null){
+                ctx.status(HTTP_OK);
+                ctx.result("Go to the start_vote page to get a cookie first!");
+            }
+            if (! isValid(uuid,voteService,precinct)){
+                ctx.status(HTTP_OK);
+                ctx.result("You seem to have an invalid cookie for this precinct.");
+            }
+            if (hasAlreadyVoted(uuid,voteService)) {
+                ctx.status(HTTP_OK);
+                ctx.result("You've already visited this page.");
+            } else {
+                long waitTime = voteService.endVote(uuid, precinct);
+                ctx.result("Thanks for checking in! You waited " + waitTime + " minute(s)!");
+                ctx.status(HTTP_OK);
 
-            LOG.info("end vote handler");
-            LOG.info(String.format("precinct: %d\n", precinct));
-            LOG.info(String.format("uuid end: %s\n", uuid));
+                //I don't understand why we would do that.
+                //We want to prevent double-counting of a single voter.
+                //ctx.clearCookieStore();
+
+                LOG.info("end vote handler");
+                LOG.info(String.format("precinct: %d\n", precinct));
+                LOG.info(String.format("uuid end: %s\n", uuid));
+            }
         } catch (Exception e) {
             ctx.status(HTTP_BAD_REQUEST);
             LOG.error(e.toString());

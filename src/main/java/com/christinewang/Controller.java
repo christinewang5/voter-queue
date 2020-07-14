@@ -30,11 +30,11 @@ public class Controller {
     public static final int HTTP_BAD_REQUEST = 400;
     private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
-    public static final String WEB_HOST = "localhost";
-    public static final int WEB_PORT = 4567;
-    public static final int MIN_PRECINCT = 0;
+    public static final String WEB_HOST = "http://voter-queue.herokuapp.com";
+    //public static final int WEB_PORT = 4567;
+    private static final int MIN_PRECINCT = 0;
     //Set to 10 for testing purposes, will be set to real value later.
-    public static final int MAX_PRECINCT = 10;
+    private static final int MAX_PRECINCT = 10;
 
     public static void main(String[] args) {
         // Set up database
@@ -122,7 +122,7 @@ public class Controller {
             try {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
-                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
+                String baseUrl = WEB_HOST + "/start_vote/";
                 String QR_embed = getStart_Printout(p,baseUrl);
                 res.status(HTTP_OK);
                 return QR_embed;
@@ -137,7 +137,7 @@ public class Controller {
             try {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
-                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
+                String baseUrl = WEB_HOST + "/end_vote/";
                 String QR_embed = getEnd_Printout(p,baseUrl);
                 res.status(HTTP_OK);
                 return QR_embed;
@@ -152,7 +152,7 @@ public class Controller {
             try {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
-                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/wait_time/";
+                String baseUrl = WEB_HOST + "/wait_time/";
                 String QR_embed = getQR(p, baseUrl, true);
                 res.status(HTTP_OK);
                 return QR_embed;
@@ -165,7 +165,7 @@ public class Controller {
 
         get("/all_QR_start", (req, res) -> {
             try {
-                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/start_vote/";
+                String baseUrl = WEB_HOST + "/start_vote/";
                 String accumulateAll = getStart_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
                 res.status(HTTP_OK);
                 return accumulateAll;
@@ -178,7 +178,7 @@ public class Controller {
 
         get("/all_QR_end", (req, res) -> {
             try {
-                String baseUrl = WEB_HOST + ":" + WEB_PORT + "/end_vote/";
+                String baseUrl = WEB_HOST + "/end_vote/";
                 String accumulateAll = getEnd_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
                 res.status(HTTP_OK);
                 return accumulateAll;
@@ -191,7 +191,7 @@ public class Controller {
 
         get("/all_QR_wait", (req, res) -> {
             try {
-                String baseURL = WEB_HOST + ":" + WEB_PORT + "/wait_time/";
+                String baseURL = WEB_HOST + "/wait_time/";
                 String accumulateAll = "";
                 for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
                     accumulateAll += "<p><strong>QR wait code for precinct " + p + "</strong><p>";
