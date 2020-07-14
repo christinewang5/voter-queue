@@ -95,11 +95,6 @@
       <artifactId>j2html</artifactId>  
       <version>0.7</version> 
     </dependency>
-    <dependency>
-      <groupId>org.webjars.npm</groupId>
-      <artifactId>vue</artifactId>
-      <version>2.6.10</version>
-    </dependency>
   </dependencies>
   <build>
     <pluginManagement> 
