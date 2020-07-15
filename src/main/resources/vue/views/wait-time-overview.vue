@@ -6,7 +6,7 @@
                 <thead>
                     <tr>
                         <th>Precinct</th>
-                        <th>Wait Time</th>
+                        <th>Wait Time (minutes)</th>
                     </tr>
                 </thead>
                 <tbody>
