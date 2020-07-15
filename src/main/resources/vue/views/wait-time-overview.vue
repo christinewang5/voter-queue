@@ -5,13 +5,15 @@
             <template v-slot:default>
                 <thead>
                     <tr>
-                        <th>Precinct</th>
+                        <th>Precinct Number</th>
+                        <th>Precinct Name</th>
                         <th>Wait Time (minutes)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="wt in waitTimes">
                         <td>{{wt.precinct}}</td>
+                        <td>{{wt.name}}</td>
                         <td>{{wt.waitTime}}</td>
                     </tr>
                 </tbody>

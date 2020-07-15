@@ -58,5 +58,6 @@ public class Application {
         });
 
         app.error(404, ctx -> ctx.result("Page does not exist."));
+        LOG.info("Server started, all routes mapped successfully.\n");
     }
 }
