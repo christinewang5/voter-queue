@@ -5,11 +5,12 @@ Deployed on <link>https://voter-queue.herokuapp.com/</link>.
 Or run `heroku open -r prod` in your terminal.
 
 ## The Stack
-* SparkJava - web framework
+* ~~SparkJava~~ Javalin - web framework
 * postgres - database 
 * Lombok - library for getters/setters
 * Jackson  - JSON parsing library 
 * ZXing - library for QR codes
+* SLF4J - logging framework
 
 ## Useful commands 
 If any of the Maven dependencies change, run 
