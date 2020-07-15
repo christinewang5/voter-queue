@@ -140,4 +140,24 @@ public class HerokuUtil {
         return false;
     }
 
+    /** Check if a uuid has already been used to end a vote in a given precinct.
+     * @author John Berberian
+     * @param uuid The uuid to check.
+     * @param voteService The VoteService connected to the voter_queue database.
+     * @param precinct The precinct to check in.
+     * @return True if the uuid has already been used, false if not.
+     * */
+    public static boolean hasAlreadyVoted(UUID uuid, VoteService voteService, int precinct) {
+        //Get all the complete votes.
+        List<VoteCompleteModel> votes = voteService.getPrecinctCompleteVotes(precinct);
+        //Search through them...
+        for (VoteCompleteModel v : votes) {
+            //...and if the input uuid matches one, it's already been used.
+            if (uuid.equals(v.getUUID())) {
+                return true;
+            }
+        }
+        //Otherwise, it's still available.
+        return false;
+    }
 }

@@ -92,12 +92,10 @@ public class VoteService {
         }
     }
 
-    /**
-     * A method to get all votes for a given precinct.
-     *
+    /** A method to get all votes for a given precinct.
+     * @author John Berberian
      * @param precinct The precinct in question, by number.
      * @return A List of VoteModel, representing the votes for the precinct
-     * @author John Berberian
      */
     public List<VoteModel> getPrecinctVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
@@ -108,13 +106,11 @@ public class VoteService {
         }
     }
 
-    /**
-     * A method to get all complete votes for a given precinct.
-     *
+    /** A method to get all complete votes for a given precinct.
+     * @author John Berberian
      * @param precinct The precinct in question, by number.
      * @return A List of VoteCompleteModel, representing
      * the complete votes for the precinct
-     * @author John Berberian
      */
     public List<VoteCompleteModel> getPrecinctCompleteVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
@@ -122,6 +118,24 @@ public class VoteService {
                 .addParameter("precinct", precinct)
                 .executeAndFetch(VoteCompleteModel.class);
             return votes;
+        }
+    }
+
+    /** A method to get the precinct of a given uuid.
+     * @author John Berberian
+     * @param uuid The uuid to find the precinct of.
+     * @return The precinct number.
+     * */
+    public int getPrecinct(UUID uuid) {
+        try (Connection conn = sql2o.open()) {
+            List<Integer> precincts = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
+                    .addParameter("uuid",uuid)
+                    .executeAndFetch(Integer.class);
+            if (precincts.size()>1) {
+                LOG.error(String.format("Error in getPrecinct: %d precincts found for uuid %s, choosing first.",
+                        precincts.size(),uuid));
+            }
+            return precincts.get(0);
         }
     }
 }

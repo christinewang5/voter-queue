@@ -87,7 +87,7 @@ public class HTMLBase {
             "    <!--Some more line breaks... catching a theme here?-->\n" +
                     "    <br><br><br>\n" +
                     "    <!--And an under-image header.-->\n" +
-                    "    <h2>Scan this when you exit.</h2>\n" +
+                    "    <h2>Scan this when you get to the desk.</h2>\n" +
                     "    <!--You guessed it!-->\n" +
                     "    <br>\n" +
                     "    <!--Some nice info text.-->\n" +

@@ -53,8 +53,7 @@ public class VoteController {
                 waitString = "We currently have no data for precinct "+precinct+", "+precinctNames.get(precinct)+".\n"+
                     "You could be the one to change that!";
             }
-            //If the person has already voted, log it.
-            if (hasAlreadyVoted(uuid,voteService)){
+            if (hasAlreadyVoted(uuid,voteService,precinct)) {
                 //But give them no indication that anything is wrong.
                 ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
@@ -62,6 +61,18 @@ public class VoteController {
                         "You can go again, unless you're trying to mess up our data.\n\n" +
                         waitString);*/
                 LOG.info(String.format("already completed, going again: %s -> %s", uuid, uuid2));
+            }
+            //If the person has already voted in a different precinct, log it.
+            else if (hasAlreadyVoted(uuid,voteService)){
+                //But give them no indication that anything is wrong.
+                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                        waitString);
+                /*ctx.result("It looks like you've already gone through.\n" +
+                        "You can go again, unless you're trying to mess up our data.\n\n" +
+                        waitString);*/
+                int precinctOld = voteService.getPrecinct(uuid);
+                LOG.info(String.format("already completed, transferred from precinct %d -> %d: %s -> %s",
+                        precinctOld, precinct, uuid, uuid2));
             }
             //If the person has already scanned, log it.
             else if (isValid(uuid, voteService, precinct)){
@@ -81,7 +92,8 @@ public class VoteController {
                 /*ctx.result("Hm, you seem to have transferred from another precinct.\n" +
                         "That's fine, we'll just pretend you started here.\n\n"+
                         waitString);*/
-                LOG.info(String.format("transferred from other precinct: %s -> %s",uuid, uuid2));
+                int precinctOld = voteService.getPrecinct(uuid);
+                LOG.info(String.format("didn't complete, transferred from precinct %d -> %d: %s -> %s",precinctOld,precinct,uuid, uuid2));
             }
             //And then our nice normal case.
             else {
@@ -159,6 +171,15 @@ public class VoteController {
                 LOG.info(String.format("Uncookied user requested end vote, precinct %d.\n",precinct));
             }
             //If a person gives us a valid cookie with an invalid uuid, log it.
+            else if (! isValid(uuid,voteService)){
+                //But give them no indication that anything is wrong.
+                ctx.status(HTTP_OK);
+                ctx.result("Thanks for checking in!");
+                //ctx.result("You seem to have an invalid cookie for this precinct.");
+                //Log it!
+                LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",uuid,precinct));
+            }
+            //If a person gives us a valid cookie with a valid uuid from another precinct, log it.
             else if (! isValid(uuid,voteService,precinct)){
                 //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
