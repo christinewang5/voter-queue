@@ -23,6 +23,7 @@ public class HTMLBase {
     /** The first half of a starting printout.
      *  Consists of: a big centered div, with some stuff (read the comments) in it.
      *  Should go before the QR code.
+     *  Needs to be formatted with the precinct number and then the precinct name.
      * */
     public static final String Printout_Start_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
@@ -32,6 +33,7 @@ public class HTMLBase {
                     "    <br><br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
                     "    <h1>Estimate the Wait!</h1>\n" +
+                    "    <p>Precinct %d: %s</p>\n" +
                     "    <!--And another line break, to separate it from the image.-->\n" +
                     "    <br>\n" +
                     "    <!--This is our big QR code.-->\n";
@@ -61,6 +63,7 @@ public class HTMLBase {
     /** The first half of an ending printout.
      *  Consists of: a big centered div, with some stuff (read the comments) in it.
      *  Should go before the QR code.
+     *  Needs to be formatted with the precinct number and then the precinct name.
      * */
     public static final String Printout_End_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
@@ -70,6 +73,7 @@ public class HTMLBase {
                     "    <br><br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
                     "    <h1>Help Estimate the Wait!</h1>\n" +
+                    "    <p>Precinct %d: %s</p>\n" +
                     "    <!--And another line break, to separate it from the image.-->\n" +
                     "    <br>\n" +
                     "    <!--This is our big QR code.-->\n";

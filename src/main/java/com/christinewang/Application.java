@@ -16,7 +16,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
  * @author John B.
  */
 public class Application {
-    public static Logger LOG = LoggerFactory.getLogger(Controller.class);
+    public static Logger LOG = LoggerFactory.getLogger(Application.class);
     public static final int HTTP_OK = 200;
     public static final int HTTP_BAD_REQUEST = 400;
     public static VoteService voteService;

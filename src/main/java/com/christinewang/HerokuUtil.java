@@ -60,7 +60,7 @@ public class HerokuUtil {
                 }
             });
 
-            LOG.error(e.toString());
+            LOG.error("Probably because local rather than global db used: "+e.toString());
         }
 
         return sql2o;
@@ -79,7 +79,7 @@ public class HerokuUtil {
         }
     }
 
-    /** Check if a uuid is valid to be ended for a given precinct.
+    /** Check if a uuid is valid for a given precinct.
      * @author John Berberian
      * @param uuid The uuid to check.
      * @param voteService The VoteService connected to the voter_queue database.
@@ -89,6 +89,26 @@ public class HerokuUtil {
     public static boolean isValid(UUID uuid, VoteService voteService, int precinct) {
         //Get all the votes (valid uuids) for that precinct
         List<VoteModel> votes = voteService.getPrecinctVotes(precinct);
+        //Search through them...
+        for (VoteModel v : votes) {
+            //...and if the input uuid matches one, it is valid.
+            if (uuid.equals(v.getUUID())) {
+                return true;
+            }
+        }
+        //Otherwise, it is invalid.
+        return false;
+    }
+
+    /** Check if a uuid is valid for any precinct.
+     * @author John Berberian
+     * @param uuid The uuid to check.
+     * @param voteService The VoteService connected to the voter_queue database.
+     * @return True if the uuid is valid, false if not.
+     * */
+    public static boolean isValid(UUID uuid, VoteService voteService) {
+        //Get all the votes (valid uuids) for that precinct
+        List<VoteModel> votes = voteService.getAllVotes();
         //Search through them...
         for (VoteModel v : votes) {
             //...and if the input uuid matches one, it is valid.

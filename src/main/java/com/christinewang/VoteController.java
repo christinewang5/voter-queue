@@ -11,6 +11,7 @@ import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.HTTP_OK;
 import static com.christinewang.Application.HTTP_BAD_REQUEST;
+import static com.christinewang.PrecinctNames.precinctNames;
 import static com.christinewang.QRController.MAX_PRECINCT;
 import static com.christinewang.QRController.MIN_PRECINCT;
 import static com.christinewang.HerokuUtil.*;
@@ -22,14 +23,47 @@ public class VoteController {
     public static Handler startVoteHandler = ctx -> {
         try {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
-            UUID uuid = voteService.startVote(precinct);
-            ctx.cookieStore("uuid", uuid);
+            UUID uuid;
+            try {
+                String val = ctx.cookieStore("uuid");
+                uuid = UUID.fromString(val);
+            } catch (Exception e){
+                uuid = UUID.fromString("null");
+            }
+            UUID uuid2 = voteService.startVote(precinct);
+            ctx.cookieStore("uuid", uuid2);
             ctx.status(HTTP_OK);
-            ctx.result("Thanks for checking in! Remember to check out at the end.");
+            String waitString = "The current wait time for precinct "+precinct+", "+precinctNames.get(precinct)+" is: " +
+                    voteService.getWaitTime(precinct)+" minute(s).";
+            if (voteService.getWaitTime(precinct)==null ||
+                    (""+voteService.getWaitTime(precinct)).equals("null")) {
+                LOG.warn(String.format("No data for precinct %d",precinct));
+                waitString = "We currently have no data for precinct "+precinct+", "+precinctNames.get(precinct)+".\n"+
+                    "You could be the one to change that!";
+            }
+            if (hasAlreadyVoted(uuid,voteService)){
+                ctx.result("It looks like you've already gone through.\n" +
+                        "You can go again, unless you're trying to mess up our data.\n\n" +
+                        waitString);
+                LOG.info(String.format("already completed, going again: %s -> %s", uuid, uuid2));
+            } else if (isValid(uuid, voteService, precinct)){
+                ctx.result("You scanned this before, but you're here again.\n" +
+                        "That's fine, we'll just pretend that you initially arrived now.\n\n" +
+                        waitString);
+                LOG.info(String.format("didn't complete, going again: %s -> %s",uuid,uuid2));
+            } else if (isValid(uuid, voteService)){
+                ctx.result("Hm, you seem to have transferred from another precinct.\n" +
+                        "That's fine, we'll just pretend you started here.\n\n"+
+                        waitString);
+                LOG.info(String.format("transferred from other precinct: %s -> %s",uuid, uuid2));
+            } else {
+                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                        waitString);
 
-            LOG.info("start vote handler");
-            LOG.info(String.format("precinct: %d\n", precinct));
-            LOG.info(String.format("uuid start: %s \n", uuid));
+                LOG.info("start vote handler");
+            }
+            LOG.info(String.format("precinct: %d", precinct));
+            LOG.info(String.format("uuid start: %s \n", uuid2));
         } catch (Exception e) {
             ctx.status(HTTP_BAD_REQUEST);
 
@@ -64,7 +98,7 @@ public class VoteController {
                 //ctx.clearCookieStore();
 
                 LOG.info("end vote handler");
-                LOG.info(String.format("precinct: %d\n", precinct));
+                LOG.info(String.format("precinct: %d", precinct));
                 LOG.info(String.format("uuid end: %s\n", uuid));
             }
         } catch (Exception e) {

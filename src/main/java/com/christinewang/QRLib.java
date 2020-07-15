@@ -15,6 +15,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.christinewang.PrecinctNames.precinctNames;
+
 /** Contains methods for generating QR codes
  * @author John Berberian
  * @author Christine Wang
@@ -119,7 +121,9 @@ public class QRLib {
     public static String getStart_Printout(int precinct, String urlBase)
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
-        return HTMLBase.Printout_Head+HTMLBase.Printout_Start_FirstHalf+
+        return HTMLBase.Printout_Head+String.format(HTMLBase.
+                Printout_Start_FirstHalf, precinct,
+                precinctNames.get(precinct)) +
                 getQR(precinct, urlBase, false)+
                 HTMLBase.Printout_Start_SecondHalf+HTMLBase.Printout_Foot;
     }
@@ -133,7 +137,9 @@ public class QRLib {
     public static String getEnd_Printout(int precinct, String urlBase)
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
-        return HTMLBase.Printout_Head+HTMLBase.Printout_End_FirstHalf+
+        return HTMLBase.Printout_Head+String.format(HTMLBase.
+                        Printout_End_FirstHalf, precinct,
+                precinctNames.get(precinct)) +
                 getQR(precinct, urlBase, false)+
                 HTMLBase.Printout_End_SecondHalf+HTMLBase.Printout_Foot;
     }
@@ -153,7 +159,8 @@ public class QRLib {
         //For each of our precincts in question...
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
-            bigPage += HTMLBase.Printout_Start_FirstHalf+
+            bigPage += String.format(HTMLBase.Printout_Start_FirstHalf,
+                    i, precinctNames.get(i)) +
                     getQR(i, urlBase, false)+
                     HTMLBase.Printout_Start_SecondHalf;
         }
@@ -178,7 +185,8 @@ public class QRLib {
         //For each of our precincts in question...
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
-            bigPage += HTMLBase.Printout_End_FirstHalf+
+            bigPage += String.format(HTMLBase.Printout_End_FirstHalf,
+                    i, precinctNames.get(i)) +
                     getQR(i, urlBase, false)+
                     HTMLBase.Printout_End_SecondHalf;
         }
