@@ -15,7 +15,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
  * Contains all the routes.
  *
  * @author Christine Wang
- * @author John B.
+ * @author John Berberian
  */
 public class Application {
     public static Logger LOG = LoggerFactory.getLogger(Application.class);

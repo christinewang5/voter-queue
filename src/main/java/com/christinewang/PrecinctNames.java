@@ -44,21 +44,20 @@ public class PrecinctNames {
         File csv = new File(
                 getClass().getClassLoader().getResource("precinctNames.csv").getFile()
         );
-
-        //
+        //Get a nice reader for it
         FileReader file = new FileReader(csv);
         BufferedReader buff = new BufferedReader(file);
+        //And read all the lines into an arraylist
         ArrayList<String> lines = new ArrayList<>();
         while (buff.ready()){
             lines.add(buff.readLine());
         }
-
-        //Sort the list, in case it is out of order.
-        Comparator<String> sortByIdx = Comparator.comparingInt((String s) -> Integer.parseInt(s.split(",")[0]));
-        lines.sort(sortByIdx);
-
+        //Sort the list, in case it is out of order, by precinct.
+        Comparator<String> sortByPrec= Comparator.comparingInt((String s) -> Integer.parseInt(s.split(",")[0]));
+        lines.sort(sortByPrec);
+        //Get the maxind and minind, along with the names list.
         //This approach should work, unless they skipped numbers.
-        int max_l=-1; //Set to negative number
+        int max_l=-2147483648; //Set to minInt
         int min_l=2147483647; //Set to maxInt.
         precinctNames = new ArrayList<>();
         for (String line : lines) {
@@ -67,7 +66,13 @@ public class PrecinctNames {
             max_l = Math.max(curr_l, max_l);
             min_l = Math.min(curr_l, min_l);
         }
+        //Set the values!
         MAX_PRECINCT = max_l;
         MIN_PRECINCT = min_l;
+
+        //Pad out the beginning of precinctNames with nonsense, for nonzero min_precinct values.
+        for (int i=0;i<MIN_PRECINCT;i++){
+            precinctNames.add(0,"SHOULD NEVER BE SEEN");
+        }
     }
 }

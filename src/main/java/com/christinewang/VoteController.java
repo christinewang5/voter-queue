@@ -18,6 +18,10 @@ import static com.christinewang.PrecinctNames.MAX_PRECINCT;
 import static com.christinewang.PrecinctNames.MIN_PRECINCT;
 import static com.christinewang.HerokuUtil.*;
 
+/** Contains all three basic handlers: start, end, and wait.
+ * @author Christine Wang
+ * @author John Berberian
+ * */
 
 // TODO - add test
 public class VoteController {
@@ -51,6 +55,7 @@ public class VoteController {
             }
             //If the person has already voted, log it.
             if (hasAlreadyVoted(uuid,voteService)){
+                //But give them no indication that anything is wrong.
                 ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.result("It looks like you've already gone through.\n" +
@@ -58,8 +63,9 @@ public class VoteController {
                         waitString);*/
                 LOG.info(String.format("already completed, going again: %s -> %s", uuid, uuid2));
             }
-            //If the person has already scanned, lot it.
+            //If the person has already scanned, log it.
             else if (isValid(uuid, voteService, precinct)){
+                //But give them no indication that anything is wrong.
                 ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.result("You scanned this before, but you're here again.\n" +
@@ -69,6 +75,7 @@ public class VoteController {
             }
             //If the person has already scanned in a different precinct, log it.
             else if (isValid(uuid, voteService)){
+                //But give them no indication that anything is wrong.
                 ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.result("Hm, you seem to have transferred from another precinct.\n" +
@@ -85,9 +92,12 @@ public class VoteController {
             }
             LOG.info(String.format("precinct: %d", precinct));
             LOG.info(String.format("uuid start: %s \n", uuid2));
-        } catch (Exception e) {
+        }
+        //If something unforeseen goes wrong, log it.
+        catch (Exception e) {
+            //Don't give them any page.
             ctx.status(HTTP_BAD_REQUEST);
-
+            //And log it, incl. the location, StartVoteHandler.
             LOG.error("StartVoteHandler: "+e.toString());
         }
 
@@ -98,26 +108,33 @@ public class VoteController {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             boolean noCookie;
             boolean badCookie;
+            //This had to be init'd to something.
+            //If it remains null, that is handled later.
             UUID uuid = null;
 
-            //UUID.fromString will throw NullPointerException
-            //if passed a no-cookie.
+            //UUID.fromString will throw NullPointerException if there is no cookie
+            //ctx.cookieStore will throw Exception if the JSON/base64 is invalid.
             try {
                 String val = ctx.cookieStore("uuid");
                 uuid = UUID.fromString(val);
+                //Everything went fine, so no error-flags.
                 noCookie = false;
-                badCookie=false;
+                badCookie = false;
             } catch (NullPointerException e) {
+                //NullPointer, therefore noCookie.
                 noCookie = true;
                 badCookie=false;
             } catch (Exception e){
-                //LOG.error("Ignore the JSON: "+e.toString());
+                //Bad JSON/base64, therefore badCookie.
                 noCookie=false;
                 badCookie=true;
             }
+            //If someone fed us a bad/malicious cookie, log it.
             if (badCookie) {
+                //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
                 ctx.result("Thanks for checking in!");
+                //Try to clear the cookies though.
                 boolean cleared;
                 try {
                     ctx.clearCookieStore();
@@ -125,28 +142,41 @@ public class VoteController {
                 } catch (Exception e) {
                     cleared=false;
                 }
+                //Log it, including success/failure of clearing.
                 String clearStatus = (cleared) ? "cleared cookieStore" : "failed to clear cookieStore";
                 LOG.info("Possibly malicious: Bad cookie, likely bad JSON or bad base64, " +
                         clearStatus+".\n");
             }
+            //If a person has no cookie, log it.
             else if (noCookie || uuid==null){
+                //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
+                //Actually, I'm torn on this one. Should we let the user
+                // know that they forgot to scan the start?
                 ctx.result("Thanks for checking in!");
                 //ctx.result("Please scan the starting QR before the ending QR.");
+                //Log it!
                 LOG.info(String.format("Uncookied user requested end vote, precinct %d.\n",precinct));
             }
+            //If a person gives us a valid cookie with an invalid uuid, log it.
             else if (! isValid(uuid,voteService,precinct)){
+                //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
                 ctx.result("Thanks for checking in!");
                 //ctx.result("You seem to have an invalid cookie for this precinct.");
+                //Log it!
                 LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",uuid,precinct));
             }
+            //If a person tries to vote twice, log it.
             else if (hasAlreadyVoted(uuid,voteService)) {
+                //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
                 ctx.result("Thanks for checking in!");
                 //ctx.result("You've already visited this page.");
+                //Log it!
                 LOG.info(String.format("Repeated request to end vote by valid uuid %s, precinct %d.\n",uuid,precinct));
             } else {
+                //Otherwise, everything looks good!
                 long waitTime = voteService.endVote(uuid, precinct);
                 ctx.result("Thanks for checking in! You waited " + waitTime + " minute(s)!");
                 ctx.status(HTTP_OK);
@@ -155,12 +185,17 @@ public class VoteController {
                 //We want to prevent double-counting of a single voter.
                 //ctx.clearCookieStore();
 
+                //But still, log it.
                 LOG.info("end vote handler");
                 LOG.info(String.format("precinct: %d", precinct));
                 LOG.info(String.format("uuid end: %s\n", uuid));
             }
-        } catch (Exception e) {
+        }
+        //If something unforeseen goes wrong, log it.
+        catch (Exception e) {
+            //Don't give them any page.
             ctx.status(HTTP_BAD_REQUEST);
+            //And log it, incl. the location, EndVoteHandler.
             LOG.error("EndVoteHandler: "+e.toString());
         }
     };
@@ -178,9 +213,13 @@ public class VoteController {
                 ctx.status(HTTP_OK);
                 ctx.result("Wait Time For Precinct " + precinct + ": " + voteService.getWaitTime(precinct) + " minute(s)");
             }
-        } catch (Exception e) {
-            LOG.error("WaitTimeHandler: "+e.toString());
+        }
+        //If something unforeseen goes wrong, log it.
+        catch (Exception e) {
+            //Don't give them any page.
             ctx.status(HTTP_BAD_REQUEST);
+            //And log it, incl. the location, WaitTimeHandler.
+            LOG.error("WaitTimeHandler: "+e.toString());
         }
     };
 

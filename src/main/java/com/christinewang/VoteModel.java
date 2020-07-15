@@ -5,6 +5,10 @@ import lombok.Data;
 import java.util.Date;
 import java.util.UUID;
 
+/** An object to hold a just-started vote.
+ * @author Christine Wang
+ * @author John Berberian
+ * */
 @Data
 public class VoteModel {
     private UUID uuid;
