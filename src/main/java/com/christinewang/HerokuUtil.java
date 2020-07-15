@@ -60,7 +60,7 @@ public class HerokuUtil {
                 }
             });
 
-            LOG.error("Probably because local rather than global db used: "+e.toString());
+            LOG.error("Ignore the NullPointer: "+e.toString());
         }
 
         return sql2o;

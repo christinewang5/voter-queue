@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static com.christinewang.PrecinctNames.MAX_PRECINCT;
+import static com.christinewang.PrecinctNames.MIN_PRECINCT;
 import static com.christinewang.QRLib.*;
 import static spark.Spark.get;
 import static spark.Spark.staticFiles;
@@ -31,10 +33,6 @@ public class Controller {
     private static final int TIME_IN_DAY_IN_S = 86400;
     private static Logger LOG = LoggerFactory.getLogger(Controller.class);
     public static final String WEB_HOST = "http://voter-queue.herokuapp.com";
-    //public static final int WEB_PORT = 4567;
-    private static final int MIN_PRECINCT = 0;
-    //Set to 10 for testing purposes, will be set to real value later.
-    private static final int MAX_PRECINCT = 10;
 
     public static void main(String[] args) {
         // Set up database

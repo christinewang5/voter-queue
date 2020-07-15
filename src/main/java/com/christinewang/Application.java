@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 
+import java.io.IOException;
+
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 /**
@@ -22,6 +24,12 @@ public class Application {
     public static VoteService voteService;
 
     public static void main(String[] args) {
+        try {
+            new PrecinctNames();
+        } catch (IOException e) {
+            LOG.error("Looks like we may be missing our csv.");
+            LOG.error(e.toString());
+        }
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
 
