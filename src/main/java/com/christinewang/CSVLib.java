@@ -32,7 +32,7 @@ public class CSVLib {
     public static void logInit() {
         try {
             //Write a restart message.
-            charSink.write("=======RESTART=======");
+            charSink.write("=======RESTART=======\n");
             //It worked! The file must be writeable.
             isFileWriteable = true;
         } catch (IOException e) {
@@ -54,7 +54,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,START,%d,%s", getNow(), precinct, uuid));
+                charSink.write(String.format("%s,START,%d,%s\n", getNow(), precinct, uuid));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
                 LOG.error(String.format("logStart: Something is wrong with isFileWriteable, or %s " +
@@ -76,7 +76,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,MIGRATE.INCOMPLETE,%d,%d,%s,%s", getNow(),
+                charSink.write(String.format("%s,MIGRATE.INCOMPLETE,%d,%d,%s,%s\n", getNow(),
                         precinctOld, precinctNew, uuidOld, uuidNew));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
@@ -99,7 +99,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,MIGRATE.COMPLETE,%d,%d,%s,%s", getNow(),
+                charSink.write(String.format("%s,MIGRATE.COMPLETE,%d,%d,%s,%s\n", getNow(),
                         precinctOld, precinctNew, uuidOld, uuidNew));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
@@ -120,7 +120,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,END,%d,%s", getNow(), precinct, uuid));
+                charSink.write(String.format("%s,END,%d,%s\n", getNow(), precinct, uuid));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
                 LOG.error(String.format("logEnd: Something is wrong with isFileWriteable, or %s " +
@@ -141,7 +141,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,NOCHANGE.BADUUID,%d,%s", getNow(), precinct, uuid));
+                charSink.write(String.format("%s,NOCHANGE.BADUUID,%d,%s\n", getNow(), precinct, uuid));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
                 LOG.error(String.format("logNC_BadUUID: Something is wrong with isFileWriteable," +
@@ -163,7 +163,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,NOCHANGE.LOSTUUID,%d,%d,%s", getNow(),
+                charSink.write(String.format("%s,NOCHANGE.LOSTUUID,%d,%d,%s\n", getNow(),
                         precinct, precinctRegistered, uuid));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
@@ -185,7 +185,7 @@ public class CSVLib {
             //Surrounded in try/catch in case some error was overlooked.
             try {
                 //Write our status string.
-                charSink.write(String.format("%s,NOCHAGE.DOUBLESCAN,%d,%s", getNow(), precinct, uuid));
+                charSink.write(String.format("%s,NOCHAGE.DOUBLESCAN,%d,%s\n", getNow(), precinct, uuid));
             } catch (IOException e) {
                 //Hm, something went wrong, and we didn't expect it to. Log it!
                 LOG.error(String.format("logNC_DoubleScan: Something is wrong with isFileWriteable," +

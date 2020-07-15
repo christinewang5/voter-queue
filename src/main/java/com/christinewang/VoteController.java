@@ -53,6 +53,7 @@ public class VoteController {
                 waitString = "We currently have no data for precinct "+precinct+", "+precinctNames.get(precinct)+".\n"+
                     "You could be the one to change that!";
             }
+            //If the person has already voted in this precinct, log it.
             if (hasAlreadyVoted(uuid,voteService,precinct)) {
                 //But give them no indication that anything is wrong.
                 ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
@@ -61,6 +62,7 @@ public class VoteController {
                         "You can go again, unless you're trying to mess up our data.\n\n" +
                         waitString);*/
                 LOG.info(String.format("already completed, going again: %s -> %s", uuid, uuid2));
+                CSVLib.logCompleteMigrate(precinct,precinct,uuid,uuid2);
             }
             //If the person has already voted in a different precinct, log it.
             else if (hasAlreadyVoted(uuid,voteService)){
@@ -73,6 +75,7 @@ public class VoteController {
                 int precinctOld = voteService.getPrecinct(uuid);
                 LOG.info(String.format("already completed, transferred from precinct %d -> %d: %s -> %s",
                         precinctOld, precinct, uuid, uuid2));
+                CSVLib.logCompleteMigrate(precinctOld,precinct,uuid,uuid2);
             }
             //If the person has already scanned, log it.
             else if (isValid(uuid, voteService, precinct)){
@@ -83,6 +86,7 @@ public class VoteController {
                         "That's fine, we'll just pretend that you initially arrived now.\n\n" +
                         waitString);*/
                 LOG.info(String.format("didn't complete, going again: %s -> %s",uuid,uuid2));
+                CSVLib.logIncompleteMigrate(precinct,precinct,uuid,uuid2);
             }
             //If the person has already scanned in a different precinct, log it.
             else if (isValid(uuid, voteService)){
@@ -93,7 +97,9 @@ public class VoteController {
                         "That's fine, we'll just pretend you started here.\n\n"+
                         waitString);*/
                 int precinctOld = voteService.getPrecinct(uuid);
-                LOG.info(String.format("didn't complete, transferred from precinct %d -> %d: %s -> %s",precinctOld,precinct,uuid, uuid2));
+                LOG.info(String.format("didn't complete, transferred from precinct %d -> %d: " +
+                        "%s -> %s",precinctOld,precinct,uuid, uuid2));
+                CSVLib.logIncompleteMigrate(precinctOld,precinct,uuid,uuid2);
             }
             //And then our nice normal case.
             else {
@@ -104,6 +110,7 @@ public class VoteController {
             }
             LOG.info(String.format("precinct: %d", precinct));
             LOG.info(String.format("uuid start: %s \n", uuid2));
+            CSVLib.logStart(precinct,uuid2);
         }
         //If something unforeseen goes wrong, log it.
         catch (Exception e) {
@@ -177,7 +184,9 @@ public class VoteController {
                 ctx.result("Thanks for checking in!");
                 //ctx.result("You seem to have an invalid cookie for this precinct.");
                 //Log it!
-                LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",uuid,precinct));
+                LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",
+                        uuid, precinct));
+                CSVLib.logNC_BadUUID(precinct,uuid);
             }
             //If a person gives us a valid cookie with a valid uuid from another precinct, log it.
             else if (! isValid(uuid,voteService,precinct)){
@@ -186,7 +195,10 @@ public class VoteController {
                 ctx.result("Thanks for checking in!");
                 //ctx.result("You seem to have an invalid cookie for this precinct.");
                 //Log it!
-                LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",uuid,precinct));
+                int precinctOld = voteService.getPrecinct(uuid);
+                LOG.info(String.format("Lost uuid %s requested end vote, %d -> %d.\n",
+                        uuid, precinctOld, precinct));
+                CSVLib.logNC_LostUUID(precinct,precinctOld,uuid);
             }
             //If a person tries to vote twice, log it.
             else if (hasAlreadyVoted(uuid,voteService)) {
@@ -195,12 +207,15 @@ public class VoteController {
                 ctx.result("Thanks for checking in!");
                 //ctx.result("You've already visited this page.");
                 //Log it!
-                LOG.info(String.format("Repeated request to end vote by valid uuid %s, precinct %d.\n",uuid,precinct));
+                LOG.info(String.format("Repeated request to end vote by valid uuid %s, precinct %d.\n",
+                        uuid, precinct));
+                CSVLib.logNC_DoubleScan(precinct,uuid);
             } else {
                 //Otherwise, everything looks good!
                 long waitTime = voteService.endVote(uuid, precinct);
                 ctx.result("Thanks for checking in! You waited " + waitTime + " minute(s)!");
                 ctx.status(HTTP_OK);
+                CSVLib.logEnd(precinct,uuid);
 
                 //I don't understand why we would do that.
                 //We want to prevent double-counting of a single voter.

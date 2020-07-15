@@ -14,6 +14,7 @@ public class PrecinctNames {
     public static ArrayList<String> precinctNames;
     public static int MAX_PRECINCT;
     public static int MIN_PRECINCT;
+    public static final String fileName = "precinctNames.csv";
 
     /** Just here so that I can call the non-static init method.
      * @author John Berberian
@@ -33,7 +34,7 @@ public class PrecinctNames {
      * @author John Berberian
      * */
     public void initNames() throws IOException {
-        initNames("precinctNames.csv");
+        initNames(fileName);
     }
     /** Populates precinctNames with the values from a given filename.
      * @param alternateName The filename of the csv to use.

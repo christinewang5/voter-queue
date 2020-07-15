@@ -24,10 +24,11 @@ public class Application {
     public static VoteService voteService;
 
     public static void main(String[] args) {
+        CSVLib.logInit();
         try {
             new PrecinctNames();
         } catch (IOException e) {
-            LOG.error("Looks like we may be missing our csv.");
+            LOG.error(String.format("Looks like we may be missing our %s file.", PrecinctNames.fileName));
             LOG.error(e.toString());
         }
         Sql2o sql2o = HerokuUtil.setupDB();

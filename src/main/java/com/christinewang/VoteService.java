@@ -114,7 +114,7 @@ public class VoteService {
      */
     public List<VoteCompleteModel> getPrecinctCompleteVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
-            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM comlete_vote WHERE precinct=:precinct")
+            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM complete_vote WHERE precinct=:precinct")
                 .addParameter("precinct", precinct)
                 .executeAndFetch(VoteCompleteModel.class);
             return votes;
@@ -128,7 +128,7 @@ public class VoteService {
      * */
     public int getPrecinct(UUID uuid) {
         try (Connection conn = sql2o.open()) {
-            List<Integer> precincts = conn.createQuery("SELECT * FROM vote WHERE uuid=:uuid")
+            List<Integer> precincts = conn.createQuery("SELECT precinct FROM vote WHERE uuid=:uuid")
                     .addParameter("uuid",uuid)
                     .executeAndFetch(Integer.class);
             if (precincts.size()>1) {
