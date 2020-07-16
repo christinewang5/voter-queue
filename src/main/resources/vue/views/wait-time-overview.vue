@@ -1,22 +1,22 @@
 <template id="wait-time-overview">
     <div class="container">
-        <img src="/Images/header3.png" width="910" height="193" alt="banner">
-          <v-simple-table>
+        <div class="text-subtitle-1" style="padding: 16px">Current Wait Times</div>
+        <v-simple-table>
             <template v-slot:default>
                 <thead>
-                    <tr>
-                        <th>Precinct</th>
-                        <th>Wait Time</th>
-                    </tr>
+                <tr>
+                    <th>Precinct</th>
+                    <th>Wait Time (in Minutes)</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="wt in waitTimes">
-                        <td>{{wt.precinct}}</td>
-                        <td>{{wt.waitTime}}</td>
-                    </tr>
+                <tr v-for="wt in waitTimes">
+                    <td>{{wt.precinct}}</td>
+                    <td>{{wt.waitTime}}</td>
+                </tr>
                 </tbody>
             </template>
-      </v-simple-table>
+        </v-simple-table>
     </div>
 </template>
 <script>

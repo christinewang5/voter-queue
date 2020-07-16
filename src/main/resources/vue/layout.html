@@ -3,23 +3,28 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-    <meta charset="utf8">
+
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     @componentRegistration
 </head>
-    <body>
-        <main id="app" v-cloak>
+<body>
+<div id="app" v-cloak>
+    <v-app>
+        <v-main>
+            <toolbar></toolbar>
             @routeComponent
-        </main>
-
-        <script>
-            new Vue({
-                el: "#app",
-                vuetify: new Vuetify(),
-            });
-        </script>
-    </body>
+        </v-main>
+    </v-app>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+    });
+</script>
+</body>
 </html>
