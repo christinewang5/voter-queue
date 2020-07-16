@@ -15,4 +15,9 @@ CREATE TABLE complete_vote (
     waitTime INT -- wait time in minutes
 );
 
+CREATE TABLE precinct_names (
+    precinct INT,
+    name TEXT
+);
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO voter;

@@ -92,12 +92,10 @@ public class VoteService {
         }
     }
 
-    /**
-     * A method to get all votes for a given precinct.
-     *
+    /** A method to get all votes for a given precinct.
+     * @author John Berberian
      * @param precinct The precinct in question, by number.
      * @return A List of VoteModel, representing the votes for the precinct
-     * @author John Berberian
      */
     public List<VoteModel> getPrecinctVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
@@ -108,20 +106,65 @@ public class VoteService {
         }
     }
 
-    /**
-     * A method to get all complete votes for a given precinct.
-     *
+    /** A method to get all complete votes for a given precinct.
+     * @author John Berberian
      * @param precinct The precinct in question, by number.
      * @return A List of VoteCompleteModel, representing
      * the complete votes for the precinct
-     * @author John Berberian
      */
     public List<VoteCompleteModel> getPrecinctCompleteVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
-            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM comlete_vote WHERE precinct=:precinct")
+            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM complete_vote WHERE precinct=:precinct")
                 .addParameter("precinct", precinct)
                 .executeAndFetch(VoteCompleteModel.class);
             return votes;
+        }
+    }
+
+    /** A method to get the precinct of a given uuid.
+     * @author John Berberian
+     * @param uuid The uuid to find the precinct of.
+     * @return The precinct number.
+     * */
+    public int getPrecinct(UUID uuid) {
+        try (Connection conn = sql2o.open()) {
+            List<Integer> precincts = conn.createQuery("SELECT precinct FROM vote WHERE uuid=:uuid")
+                    .addParameter("uuid",uuid)
+                    .executeAndFetch(Integer.class);
+            if (precincts.size()>1) {
+                LOG.error(String.format("Error in getPrecinct: %d precincts found for uuid %s, choosing first.",
+                        precincts.size(),uuid));
+            }
+            return precincts.get(0);
+        }
+    }
+
+    /** A method to get the name of a given precinct.
+     * @author John Berberian
+     * @param precinct The precinct to get the name of.
+     * @return The precinct's name.
+     * */
+    public String getName(int precinct) {
+        try (Connection conn = sql2o.open()) {
+            List<String> names = conn.createQuery("SELECT name FROM precinct_names WHERE precinct=:precinct")
+                    .addParameter("precinct",precinct)
+                    .executeAndFetch(String.class);
+            if (names.size()>1) {
+                LOG.error(String.format("Error in getName: %d names found for precinct %s, choosing first.",
+                        names.size(),precinct));
+            }
+            return names.get(0);
+        }
+    }
+
+    /** Gets a list of precincts and names, in NameModels.
+     * @return The List< NameModel > of names.
+     * */
+    public List<NameModel> getPrecinctNameList() {
+        try (Connection conn = sql2o.open()) {
+            List<NameModel> names = conn.createQuery("SELECT * FROM precinct_names")
+                    .executeAndFetch(NameModel.class);
+            return names;
         }
     }
 }
