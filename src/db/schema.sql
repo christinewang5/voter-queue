@@ -20,4 +20,13 @@ CREATE TABLE precinct_names (
     name TEXT
 );
 
+CREATE TABLE csv_log (
+    timeStamp TIMESTAMP,
+    eventName TEXT,
+    uuid1 uuid PRIMARY KEY,
+    uuid2 uuid PRIMARY KEY,
+    precinct1 INT,
+    precinct2 INT
+);
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO voter;

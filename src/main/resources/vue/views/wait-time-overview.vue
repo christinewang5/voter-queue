@@ -6,12 +6,14 @@
                 <thead>
                 <tr>
                     <th>Precinct</th>
+                    <th>Name</th>
                     <th>Wait Time (in Minutes)</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="wt in waitTimes">
                     <td>{{wt.precinct}}</td>
+                    <td>{{wt.name}}</td>
                     <td>{{wt.waitTime}}</td>
                 </tr>
                 </tbody>

@@ -54,11 +54,15 @@ public class VoteService {
         return waitTime;
     }
 
-    public Integer getWaitTime(int precinct) throws Exception {
+    public VoteCompleteModel getWaitTime(int precinct) throws Exception {
         try (Connection conn = sql2o.open()) {
-            List<Integer> waitTime = conn.createQuery("SELECT AVG(waitTime) FROM complete_vote WHERE precinct=:precinct")
+            List<VoteCompleteModel> waitTime = conn.createQuery("SELECT * FROM " +
+                    "(SELECT AVG(waitTime) AS waitTime FROM complete_vote WHERE precinct=:precinct) a " +
+                    "JOIN " +
+                    "(SELECT name FROM precinct_names WHERE precinct=:precinct) b " +
+                    "ON 1=1")
                 .addParameter("precinct", precinct)
-                .executeAndFetch(Integer.class);
+                .executeAndFetch(VoteCompleteModel.class);
             if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
             return waitTime.get(0);
         }
@@ -86,7 +90,11 @@ public class VoteService {
 
     public List<VoteCompleteModel> getWaitTimeOverview() {
         try (Connection conn = sql2o.open()) {
-            List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT precinct, AVG(waitTime) AS waitTime FROM complete_vote GROUP BY precinct ORDER BY precinct")
+            List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT a.precinct,waittime,name FROM " +
+                    "(SELECT precinct, AVG(waitTime) AS waitTime FROM complete_vote GROUP BY precinct ORDER BY precinct) a " +
+                    "JOIN " +
+                    "(SELECT * FROM precinct_names) b " +
+                    "ON a.precinct=b.precinct")
                 .executeAndFetch(VoteCompleteModel.class);
             return waitTimes;
         }

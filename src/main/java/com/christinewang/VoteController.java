@@ -83,7 +83,8 @@ public class VoteController {
             } else {
                 ctx.result(String.format("Wait Time For Precinct %d  - %s", precinct, waitTime));
                 ctx.status(HTTP_OK);
-                ctx.result("Wait Time For Precinct " + precinct + ": " + voteService.getWaitTime(precinct) + " minute(s)");
+                VoteCompleteModel v = voteService.getWaitTime(precinct);
+                ctx.result("Wait Time For Precinct " + precinct + ", "+v.getName()+": " + v.getWaitTime() + " minute(s)");
             }
         } catch (Exception e) {
             LOG.error(e.toString());
