@@ -5,11 +5,8 @@ import org.sql2o.Sql2o;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static com.christinewang.Application.LOG;
 
 /**
  * VoteService contains the functions to interact with the database.
@@ -56,7 +53,7 @@ public class VoteService {
 
     public Integer getWaitTime(int precinct) throws Exception {
         try (Connection conn = sql2o.open()) {
-            List<Integer> waitTime = conn.createQuery("SELECT AVG(waitTime) FROM complete_vote WHERE precinct=:precinct")
+            List<Integer> waitTime = conn.createQuery("SELECT ROUND(AVG(waitTime), 2)  FROM complete_vote WHERE precinct=:precinct")
                 .addParameter("precinct", precinct)
                 .executeAndFetch(Integer.class);
             if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
