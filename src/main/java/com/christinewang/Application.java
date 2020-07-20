@@ -21,6 +21,11 @@ import static io.javalin.apibuilder.ApiBuilder.get;
  * @author Christine Wang
  * @author John Berberian
  */
+//TODO Add back in the nice error handling from earlier.
+    //TODO Add back in the QR page naming.
+    //TODO Put csvlog function calls throughout.
+    //TODO Make csvlog downloadable from admin panel.
+    //TODO Put in Prof. Acemyan's page edits.
 public class Application {
     public static Logger LOG = LoggerFactory.getLogger(Application.class);
     public static final int HTTP_OK = 200;
