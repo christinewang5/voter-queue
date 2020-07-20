@@ -16,6 +16,7 @@ import static com.christinewang.Application.LOG;
  */
 public class VoteService {
     private Sql2o sql2o;
+    private Date epoch;
 
     public VoteService(Sql2o sql2o) {
         this.sql2o = sql2o;
@@ -57,12 +58,20 @@ public class VoteService {
     public VoteCompleteModel getWaitTime(int precinct) throws Exception {
         try (Connection conn = sql2o.open()) {
             List<VoteCompleteModel> waitTime = conn.createQuery("SELECT * FROM " +
-                    "(SELECT AVG(waitTime) AS waitTime FROM complete_vote WHERE precinct=:precinct) a " +
+                        "(" +
+                        "SELECT a.precinct,avg(waittime) AS waittime FROM " +
+                            "(SELECT * FROM complete_vote WHERE precinct=:precinct) a " +
+                        "JOIN " +
+                        "(SELECT * FROM vote WHERE starttime>=:epoch) b " +
+                            "ON a.uuid=b.uuid GROUP BY a.precinct" +
+                        ") a " +
                     "JOIN " +
-                    "(SELECT name FROM precinct_names WHERE precinct=:precinct) b " +
+                        "(SELECT name FROM precinct_names WHERE precinct=:precinct) b " +
                     "ON 1=1")
-                .addParameter("precinct", precinct)
-                .executeAndFetch(VoteCompleteModel.class);
+                    .addParameter("precinct", precinct)
+                    .addParameter("epoch", epoch)
+                    .executeAndFetch(VoteCompleteModel.class);
+            conn.commit();
             if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
             return waitTime.get(0);
         }
@@ -71,8 +80,13 @@ public class VoteService {
     // TODO - remove this later, for debugging
     public List<VoteCompleteModel> getAllCompleteVotes() {
         try (Connection conn = sql2o.beginTransaction()) {
-            List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM complete_vote")
-                .executeAndFetch(VoteCompleteModel.class);
+            List<VoteCompleteModel> votes = conn.createQuery("SELECT a.uuid,a.precinct,waittime FROM " +
+                        "(SELECT * FROM complete_vote) a " +
+                    "JOIN " +
+                        "(SELECT * FROM vote WHERE startTime>=:epoch) b " +
+                    "ON a.uuid=b.uuid")
+                    .addParameter("epoch",epoch)
+                    .executeAndFetch(VoteCompleteModel.class);
             conn.commit();
             return votes;
         }
@@ -81,8 +95,9 @@ public class VoteService {
     // TODO - remove this later, for debugging
     public List<VoteModel> getAllVotes() {
         try (Connection conn = sql2o.beginTransaction()) {
-            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote")
-                .executeAndFetch(VoteModel.class);
+            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE startTime>=epoch")
+                    .addParameter("epoch",epoch)
+                    .executeAndFetch(VoteModel.class);
             conn.commit();
             return votes;
         }
@@ -91,11 +106,18 @@ public class VoteService {
     public List<VoteCompleteModel> getWaitTimeOverview() {
         try (Connection conn = sql2o.open()) {
             List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT a.precinct,waittime,name FROM " +
-                    "(SELECT precinct, AVG(waitTime) AS waitTime FROM complete_vote GROUP BY precinct ORDER BY precinct) a " +
+                        "(" +
+                        "SELECT a.precinct,avg(waitTime) AS waitTime FROM " +
+                            "(SELECT * FROM complete_vote) a " +
+                        "JOIN " +
+                            "(SELECT * FROM vote WHERE starttime>=:epoch) b " +
+                        "ON a.uuid=b.uuid GROUP BY a.precinct ORDER BY a.precinct" +
+                        ") a " +
                     "JOIN " +
-                    "(SELECT * FROM precinct_names) b " +
-                    "ON a.precinct=b.precinct")
-                .executeAndFetch(VoteCompleteModel.class);
+                        "(SELECT * FROM precinct_names) b " +
+                    "ON a.precinct=b.precinct;")
+                    .addParameter("epoch",epoch)
+                    .executeAndFetch(VoteCompleteModel.class);
             return waitTimes;
         }
     }
@@ -107,9 +129,10 @@ public class VoteService {
      */
     public List<VoteModel> getPrecinctVotes(int precinct) {
         try (Connection conn = sql2o.open()) {
-            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE precinct=:precinct")
-                .addParameter("precinct", precinct)
-                .executeAndFetch(VoteModel.class);
+            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE precinct=:precinct AND starttime>=:epoch")
+                    .addParameter("precinct", precinct)
+                    .addParameter("epoch", epoch)
+                    .executeAndFetch(VoteModel.class);
             return votes;
         }
     }
@@ -136,9 +159,11 @@ public class VoteService {
      * */
     public int getPrecinct(UUID uuid) {
         try (Connection conn = sql2o.open()) {
-            List<Integer> precincts = conn.createQuery("SELECT precinct FROM vote WHERE uuid=:uuid")
+            List<Integer> precincts = conn.createQuery("SELECT precinct FROM vote WHERE uuid=:uuid AND starttime>=:epoch")
                     .addParameter("uuid",uuid)
+                    .addParameter("epoch",epoch)
                     .executeAndFetch(Integer.class);
+            conn.commit();
             if (precincts.size()>1) {
                 LOG.error(String.format("Error in getPrecinct: %d precincts found for uuid %s, choosing first.",
                         precincts.size(),uuid));
@@ -157,6 +182,7 @@ public class VoteService {
             List<String> names = conn.createQuery("SELECT name FROM precinct_names WHERE precinct=:precinct")
                     .addParameter("precinct",precinct)
                     .executeAndFetch(String.class);
+            conn.commit();
             if (names.size()>1) {
                 LOG.error(String.format("Error in getName: %d names found for precinct %s, choosing first.",
                         names.size(),precinct));
@@ -172,7 +198,130 @@ public class VoteService {
         try (Connection conn = sql2o.open()) {
             List<NameModel> names = conn.createQuery("SELECT * FROM precinct_names")
                     .executeAndFetch(NameModel.class);
+            conn.commit();
             return names;
         }
+    }
+
+    /** Logs an event in the csv_log table.
+     * @param timeStamp The time the event occurred.
+     * @param eventName A string representing what happened.
+     * @param uuid1 The first uuid involved (meaning of this depends on eventName)
+     * @param uuid2 The second uuid involved (meaning of this depends on eventName)
+     * @param precinct1 The first precinct involved (meaning of this depends on eventName)
+     * @param precinct2 The second precinct involved (meaning of this depends on eventName)
+     * @return True for success, false for failure.
+     * */
+    public boolean CSVLogEvent(Date timeStamp, String eventName, UUID uuid1, UUID uuid2, int precinct1, int precinct2) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            conn.createQuery("INSERT INTO csv_log(timeStamp, eventName, uuid1, uuid2, precinct1, precinct2) VALUES " +
+                    "(:timeStamp, :eventName, :uuid1, :uuid2, :precinct1, :precinct2)")
+                    .addParameter("timeStamp", timeStamp)
+                    .addParameter("eventName",eventName)
+                    .addParameter("uuid1",uuid1)
+                    .addParameter("uuid2",uuid2)
+                    .addParameter("precinct1", precinct1)
+                    .addParameter("precinct2", precinct2)
+                    .executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Logs an event in the csv_log table.
+     * @param timeStamp The time the event occurred.
+     * @param eventName A string representing what happened.
+     * @param uuid1 The first uuid involved (meaning of this depends on eventName)
+     * @param precinct1 The first precinct involved (meaning of this depends on eventName)
+     * @return True for success, false for failure.
+     * */
+    public boolean CSVLogEvent(Date timeStamp, String eventName, UUID uuid1, int precinct1) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            conn.createQuery("INSERT INTO csv_log(timeStamp, eventName, uuid1, precinct1) VALUES " +
+                    "(:timeStamp, :eventName, :uuid1, :precinct1)")
+                    .addParameter("timeStamp", timeStamp)
+                    .addParameter("eventName",eventName)
+                    .addParameter("uuid1",uuid1)
+                    .addParameter("precinct1", precinct1)
+                    .executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Logs an event in the csv_log table.
+     * @param timeStamp The time the event occurred.
+     * @param eventName A string representing what happened.
+     * @param uuid1 The first uuid involved (meaning of this depends on eventName)
+     * @param precinct1 The first precinct involved (meaning of this depends on eventName)
+     * @param precinct2 The second precinct involved (meaning of this depends on eventName)
+     * @return True for success, false for failure.
+     * */
+    public boolean CSVLogEvent(Date timeStamp, String eventName, UUID uuid1, int precinct1, int precinct2) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            conn.createQuery("INSERT INTO csv_log(timeStamp, eventName, uuid1, precinct1, precinct2) VALUES " +
+                    "(:timeStamp, :eventName, :uuid1, :precinct1, :precinct2)")
+                    .addParameter("timeStamp", timeStamp)
+                    .addParameter("eventName",eventName)
+                    .addParameter("uuid1",uuid1)
+                    .addParameter("precinct1", precinct1)
+                    .addParameter("precinct2", precinct2)
+                    .executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Logs an event in the csv_log table.
+     * @param timeStamp The time the event occurred.
+     * @param eventName A string representing what happened.
+     * @return True for success, false for failure.
+     * */
+    public boolean CSVLogEvent(Date timeStamp, String eventName) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            conn.createQuery("INSERT INTO csv_log(timeStamp, eventName) VALUES " +
+                    "(:timeStamp, :eventName)")
+                    .addParameter("timeStamp", timeStamp)
+                    .addParameter("eventName",eventName)
+                    .executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Function to change the precinct_names table.
+     * Also resets the epoch that everything runs on.
+     * Effectively a non-destructive wipe of our database.
+     * */
+    public boolean changeNames(List<Integer> precincts,List<String> names) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            //Remove the previous precinct names
+            conn.createQuery("DROP TABLE precinct_names").executeUpdate();
+            //Make a table to hold the new values
+            conn.createQuery("CREATE TABLE precinct_names(precinct INT, name TEXT)")
+            .executeUpdate();
+            //And add the new values in.
+            for (int i=0;i<names.size();i++){
+                conn.createQuery("INSERT INTO precinct_names(precinct, name) VALUES" +
+                        "(:precinct, :name)")
+                        .addParameter("precinct",precincts.get(i))
+                        .addParameter("name",names.get(i))
+                        .executeUpdate();
+            }
+            conn.commit();
+        } catch (Exception e) {
+            return false;
+        }
+        //Reset the epoch
+        epoch=new Date();
+        return true;
     }
 }

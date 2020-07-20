@@ -1,13 +1,20 @@
 package com.christinewang;
 
+import com.google.zxing.FormatException;
 import io.javalin.Javalin;
+import io.javalin.core.util.FileUtil;
 import io.javalin.plugin.rendering.vue.VueComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.christinewang.CryptoLib.getRandomString;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 /**
@@ -26,6 +33,7 @@ public class Application {
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
+        String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",15);
 
         Javalin app = Javalin.create(config -> {
             config.enableWebjars();
@@ -53,9 +61,24 @@ public class Application {
             get("/all_QR_end", QRController.all_QR_endHandler);
             get("/all_QR_wait", QRController.all_QR_waitHandler);
 
+            get("/admin", ctx -> {
+                ctx.html(CryptoLib.get_adminpage(uploadsalt));
+            });
 
         });
 
+        app.post("/upload-example", ctx -> {
+            ctx.uploadedFiles(uploadsalt).forEach(file -> {
+                try {
+                    String fileContent = new String(file.getContent().readAllBytes());
+                    List<ArrayList> cols = CSVLib.parseCSV(fileContent);
+                    if (!voteService.changeNames(cols.get(0), cols.get(1))) {throw new IOException("Bad csv format!");}
+                } catch (IOException e) {
+                    LOG.error("upload-example: cannot read file.");
+                }
+            });
+            ctx.html("Upload complete");
+        });
         app.error(404, ctx -> ctx.result("Page does not exist."));
         LOG.info("Server started, all routes mapped successfully.\n");
     }

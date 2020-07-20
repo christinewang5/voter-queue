@@ -23,8 +23,8 @@ CREATE TABLE precinct_names (
 CREATE TABLE csv_log (
     timeStamp TIMESTAMP,
     eventName TEXT,
-    uuid1 uuid PRIMARY KEY,
-    uuid2 uuid PRIMARY KEY,
+    uuid1 uuid,
+    uuid2 uuid,
     precinct1 INT,
     precinct2 INT
 );
