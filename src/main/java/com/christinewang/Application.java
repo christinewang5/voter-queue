@@ -1,18 +1,15 @@
 package com.christinewang;
 
-import com.google.zxing.FormatException;
 import io.javalin.Javalin;
-import io.javalin.core.util.FileUtil;
 import io.javalin.plugin.rendering.vue.VueComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.christinewang.CryptoLib.getRandomString;
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -33,6 +30,7 @@ public class Application {
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
+        //A random string, to prevent attackers from throwing malicious post requests at us.
         String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",15);
 
         Javalin app = Javalin.create(config -> {
@@ -67,18 +65,42 @@ public class Application {
 
         });
 
-        app.post("/upload-example", ctx -> {
+        //Listener for handling uploaded files.
+        app.post("/upload-precinctnames", ctx -> {
+            //Converted to Atomic, because otherwise Java was yelling about final variables in lambdas.
+            AtomicBoolean success= new AtomicBoolean(true);
+            LOG.info(uploadsalt);
             ctx.uploadedFiles(uploadsalt).forEach(file -> {
                 try {
+                    //Gets the contents as a string.
                     String fileContent = new String(file.getContent().readAllBytes());
+                    //Parses the contents, and gets a List of the columns.
                     List<ArrayList> cols = CSVLib.parseCSV(fileContent);
-                    if (!voteService.changeNames(cols.get(0), cols.get(1))) {throw new IOException("Bad csv format!");}
+                    //Then refreshes the names, using the first two columns.
+                    List<Integer> precincts = cols.get(0);
+                    List<String> names = cols.get(1);
+                    //LOG.info("csv parsed");
+                    try {
+                        //LOG.info("before changenames");
+                        if (!voteService.changeNames(precincts, names)) {
+                            throw new IOException("Bad csv format!");
+                        }
+                        //LOG.info("after changenames");
+                    } catch (IOException e) {
+                        LOG.error("problem in changeNames.");
+                    }
                 } catch (IOException e) {
-                    LOG.error("upload-example: cannot read file.");
+                    LOG.error("upload-precinctnames: cannot read file.");
+                    success.set(false);
                 }
             });
-            ctx.html("Upload complete");
+            if (success.get()) {
+                ctx.html("Upload complete");
+            } else {
+                ctx.html("Upload failure! Wrong format?");
+            }
         });
+
         app.error(404, ctx -> ctx.result("Page does not exist."));
         LOG.info("Server started, all routes mapped successfully.\n");
     }

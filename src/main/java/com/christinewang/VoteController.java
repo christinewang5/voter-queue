@@ -28,7 +28,7 @@ public class VoteController {
             ctx.result("Thanks for checking in! Remember to check out at the end.");
 
             LOG.info("start vote handler");
-            LOG.info(String.format("precinct: %d\n", precinct));
+            LOG.info(String.format("precinct: %d", precinct));
             LOG.info(String.format("uuid start: %s \n", uuid));
         } catch (Exception e) {
             ctx.status(HTTP_BAD_REQUEST);
@@ -64,7 +64,7 @@ public class VoteController {
                 //ctx.clearCookieStore();
 
                 LOG.info("end vote handler");
-                LOG.info(String.format("precinct: %d\n", precinct));
+                LOG.info(String.format("precinct: %d", precinct));
                 LOG.info(String.format("uuid end: %s\n", uuid));
             }
         } catch (Exception e) {

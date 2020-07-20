@@ -1,6 +1,7 @@
 package com.christinewang;
 
 import org.sql2o.Connection;
+import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
 import java.util.Date;
@@ -16,7 +17,8 @@ import static com.christinewang.Application.LOG;
  */
 public class VoteService {
     private Sql2o sql2o;
-    private Date epoch;
+    //Sets the current epoch to whenever the server started.
+    private Date epoch = new Date();
 
     public VoteService(Sql2o sql2o) {
         this.sql2o = sql2o;
@@ -302,21 +304,43 @@ public class VoteService {
      * Effectively a non-destructive wipe of our database.
      * */
     public boolean changeNames(List<Integer> precincts,List<String> names) {
-        try (Connection conn = sql2o.beginTransaction()) {
+        //LOG.info("beginning");
+        try {
+            //LOG.info("started");
             //Remove the previous precinct names
-            conn.createQuery("DROP TABLE precinct_names").executeUpdate();
-            //Make a table to hold the new values
-            conn.createQuery("CREATE TABLE precinct_names(precinct INT, name TEXT)")
-            .executeUpdate();
-            //And add the new values in.
-            for (int i=0;i<names.size();i++){
-                conn.createQuery("INSERT INTO precinct_names(precinct, name) VALUES" +
-                        "(:precinct, :name)")
-                        .addParameter("precinct",precincts.get(i))
-                        .addParameter("name",names.get(i))
-                        .executeUpdate();
+            try (Connection conn = sql2o.beginTransaction()) {
+                conn.createQuery("DELETE FROM precinct_names").executeUpdate();
+                conn.commit();
+            } catch (Exception e) {
+                return false;
             }
-            conn.commit();
+            //LOG.info("emptied table");
+            //Make a table to hold the new values
+            /*try (Connection conn = sql2o.beginTransaction()) {
+                conn.createQuery("CREATE TABLE precinct_names(precinct INT, name TEXT)")
+                        .executeUpdate();
+                conn.commit();
+            } catch (Exception e) {
+                return false;
+            }*/
+            //LOG.info("recreated table");
+            //And add the new values in.
+            try (Connection conn = sql2o.beginTransaction()) {
+                Query q = conn.createQuery("INSERT INTO precinct_names(precinct, name) VALUES" +
+                        "(:precinct, :name)");
+                for (int i = 0; i < names.size(); i++) {
+                            q.addParameter("precinct", precincts.get(i))
+                            .addParameter("name", names.get(i))
+                            .addToBatch();
+                    //LOG.info("Added element");
+                }
+                q.executeBatch();
+                //LOG.info("Added elements");
+                conn.commit();
+                //LOG.info("Committed");
+            } catch (Exception e) {
+                return false;
+            }
         } catch (Exception e) {
             return false;
         }

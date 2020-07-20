@@ -1,5 +1,7 @@
 DROP TABLE vote;
 DROP TABLE complete_vote;
+DROP TABLE precinct_names;
+DROP TABLE csv_log;
 
 -- contains the start vote time
 CREATE TABLE vote (

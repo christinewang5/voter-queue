@@ -97,6 +97,8 @@ public class HTMLBase {
                     "<p style=\"page-break-before: always\">\n";
 
     /** Template of AES-PBKDF2-protector
+     * Taken from <a href=https://github.com/MaxLaumeister/PageCrypt>here</a>.
+     * I take no credit for this, this was Max Laumeister's work.
      * */
     public static final String protected_template=
             "<!DOCTYPE html>\n" +
@@ -377,12 +379,12 @@ public class HTMLBase {
                     "<html lang=\"en\">\n" +
                     "<head>\n" +
                     "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>Title</title>\n" +
+                    "    <title>Admin panel</title>\n" +
                     "</head>\n" +
                     "\n" +
                     "<body>\n" +
-                    "<h1>Upload example</h1>\n" +
-                    "<form method=\"post\" action=\"/upload-example\" enctype=\"multipart/form-data\">\n" +
+                    "<h1>Upload precinct names</h1>\n" +
+                    "<form method=\"post\" action=\"/upload-precinctnames\" enctype=\"multipart/form-data\">\n" +
                     "    <input type=\"file\" name=\"REPLACEME\">\n" +
                     "    <button>Submit</button>\n" +
                     "</form>\n" +

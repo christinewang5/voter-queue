@@ -1,8 +1,8 @@
 package com.christinewang;
 
-import java.util.Date;
-import java.util.UUID;
-
+/** A class to hold a precinct-name pair.
+ * @author John Berberian
+ * */
 public class NameModel {
     private int precinct;
     private String name; //Name of the precinct
