@@ -42,22 +42,22 @@ public class VoteController {
             String waitString;
             try {
                 waitString = "The current wait time for precinct " + precinct + ", " + voteService.getName(precinct) + " is: " +
-                        voteService.getWaitTime(precinct) + " minute(s).";
+                         + " minute(s).";
             }
             //Unless we have no data.
             /*if (voteService.getWaitTime(precinct)==null ||
                     (""+voteService.getWaitTime(precinct)).equals("null")) {*/
             catch (SQLDataException e){
-                LOG.warn(String.format("No data for precinct %d\n", precinct));
+                LOG.warn(String.format("No data for precinct %d\n\n", precinct));
                 waitString = "We currently have no data for precinct " + precinct + ", " + voteService.getName(precinct) + ".\n" +
                         "You could be the one to change that!";
             }
             //If the person has already voted in this precinct, log it.
             if (hasAlreadyVoted(uuid,voteService,precinct)) {
                 //But give them no indication that anything is wrong.
-                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
                         waitString);
-                /*ctx.result("It looks like you've already gone through.\n" +
+                /*ctx.html("It looks like you've already gone through.\n" +
                         "You can go again, unless you're trying to mess up our data.\n\n" +
                         waitString);*/
                 LOG.info(String.format("already completed, going again: %s -> %s", uuid, uuid2));
@@ -66,9 +66,9 @@ public class VoteController {
             //If the person has already voted in a different precinct, log it.
             else if (hasAlreadyVoted(uuid,voteService)){
                 //But give them no indication that anything is wrong.
-                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
                         waitString);
-                /*ctx.result("It looks like you've already gone through.\n" +
+                /*ctx.html("It looks like you've already gone through.\n" +
                         "You can go again, unless you're trying to mess up our data.\n\n" +
                         waitString);*/
                 int precinctOld = voteService.getPrecinct(uuid);
@@ -79,9 +79,9 @@ public class VoteController {
             //If the person has already scanned, log it.
             else if (isValid(uuid, voteService, precinct)){
                 //But give them no indication that anything is wrong.
-                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
                         waitString);
-                /*ctx.result("You scanned this before, but you're here again.\n" +
+                /*ctx.html("You scanned this before, but you're here again.\n" +
                         "That's fine, we'll just pretend that you initially arrived now.\n\n" +
                         waitString);*/
                 LOG.info(String.format("didn't complete, going again: %s -> %s",uuid,uuid2));
@@ -90,9 +90,9 @@ public class VoteController {
             //If the person has already scanned in a different precinct, log it.
             else if (isValid(uuid, voteService)){
                 //But give them no indication that anything is wrong.
-                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
                         waitString);
-                /*ctx.result("Hm, you seem to have transferred from another precinct.\n" +
+                /*ctx.html("Hm, you seem to have transferred from another precinct.\n" +
                         "That's fine, we'll just pretend you started here.\n\n"+
                         waitString);*/
                 int precinctOld = voteService.getPrecinct(uuid);
@@ -102,7 +102,7 @@ public class VoteController {
             }
             //And then our nice normal case.
             else {
-                ctx.result("Thanks for checking in! Remember to check out at the end.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
                         waitString);
 
                 LOG.info("start vote handler");
@@ -152,7 +152,7 @@ public class VoteController {
             if (badCookie) {
                 //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
-                ctx.result("Thanks for checking in!");
+                ctx.html("Thanks for checking in!");
                 //Try to clear the cookies though.
                 boolean cleared;
                 try {
@@ -172,8 +172,8 @@ public class VoteController {
                 ctx.status(HTTP_OK);
                 //Actually, I'm torn on this one. Should we let the user
                 // know that they forgot to scan the start?
-                ctx.result("Thanks for checking in!");
-                //ctx.result("Please scan the starting QR before the ending QR.");
+                ctx.html("Thanks for checking in!");
+                //ctx.html("Please scan the starting QR before the ending QR.");
                 //Log it!
                 LOG.info(String.format("Uncookied user requested end vote, precinct %d.\n",precinct));
             }
@@ -181,8 +181,8 @@ public class VoteController {
             else if (! isValid(uuid,voteService)){
                 //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
-                ctx.result("Thanks for checking in!");
-                //ctx.result("You seem to have an invalid cookie for this precinct.");
+                ctx.html("Thanks for checking in!");
+                //ctx.html("You seem to have an invalid cookie for this precinct.");
                 //Log it!
                 LOG.info(String.format("Invalid uuid %s requested end vote, precinct %d.\n",
                         uuid, precinct));
@@ -192,8 +192,8 @@ public class VoteController {
             else if (! isValid(uuid,voteService,precinct)){
                 //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
-                ctx.result("Thanks for checking in!");
-                //ctx.result("You seem to have an invalid cookie for this precinct.");
+                ctx.html("Thanks for checking in!");
+                //ctx.html("You seem to have an invalid cookie for this precinct.");
                 //Log it!
                 int precinctOld = voteService.getPrecinct(uuid);
                 LOG.info(String.format("Lost uuid %s requested end vote, %d -> %d.\n",
@@ -204,8 +204,8 @@ public class VoteController {
             else if (hasAlreadyVoted(uuid,voteService)) {
                 //But give them no indication that anything is wrong.
                 ctx.status(HTTP_OK);
-                ctx.result("Thanks for checking in!");
-                //ctx.result("You've already visited this page.");
+                ctx.html("Thanks for checking in!");
+                //ctx.html("You've already visited this page.");
                 //Log it!
                 LOG.info(String.format("Repeated request to end vote by valid uuid %s, precinct %d.\n",
                         uuid, precinct));
@@ -213,7 +213,7 @@ public class VoteController {
             } else {
                 //Otherwise, everything looks good!
                 long waitTime = voteService.endVote(uuid, precinct);
-                ctx.result("Thanks for checking in! You waited " + waitTime + " minute(s)!");
+                ctx.html("Thanks for checking in! You waited " + waitTime + " minute(s)!");
                 ctx.status(HTTP_OK);
                 CSVLib.logEnd(precinct,uuid);
 
@@ -242,12 +242,12 @@ public class VoteController {
             String waitTime = dataToJson(voteService.getWaitTime(precinct));
             if (waitTime==null || waitTime.equals("null")){
                 ctx.status(HTTP_OK);
-                ctx.result(String.format("We have no data for precinct %d",precinct));
+                ctx.html(String.format("We have no data for precinct %d",precinct));
                 LOG.warn(String.format("No data for precinct %d\n",precinct));
             } else {
-                ctx.result(String.format("Wait Time For Precinct %d  - %s", precinct, waitTime));
+                ctx.html(String.format("Wait Time For Precinct %d  - %s", precinct, waitTime));
                 ctx.status(HTTP_OK);
-                ctx.result("Wait Time For Precinct " + precinct + ": " + voteService.getWaitTime(precinct) + " minute(s)");
+                ctx.html("Wait Time For Precinct " + precinct + ": " + voteService.getWaitTime(precinct) + " minute(s)");
             }
         }
         //If something unforeseen goes wrong, log it.

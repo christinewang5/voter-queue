@@ -98,7 +98,7 @@ public class VoteService {
     // TODO - remove this later, for debugging
     public List<VoteModel> getAllVotes() {
         try (Connection conn = sql2o.beginTransaction()) {
-            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE startTime>=epoch")
+            List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE startTime>=:epoch")
                     .addParameter("epoch",epoch)
                     .executeAndFetch(VoteModel.class);
             conn.commit();
