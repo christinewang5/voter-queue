@@ -27,14 +27,14 @@ public class HTMLBase {
     public static final String Printout_Start_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
                     "    <!--Behold, a nice header.-->\n" +
-                    "    <img src=\"/Images/header3.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
+                    "    <img src=\"Resources/Public/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
                     "    <!--Way to many line breaks, coming your way!-->\n" +
-                    "    <br><br><br><br><br><br><br>\n" +
+                    "    <br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
-                    "    <h1>Estimate the Wait!</h1>\n" +
+                    "    <h1>Help Estimate the Wait!</h1>\n" +
+                    "    <h2>(Scan this when you enter)</h2>\n" +
                     "    <!--And another line break, to separate it from the image.-->\n" +
-                    "    <br>\n" +
-                    "    <!--This is our big QR code.-->\n";
+                    "    <!--This is our big QR code.-->";
 
     /** The second half of a starting printout.
      *  Consists of: a big centered div, with some stuff (read the comments) in it.
@@ -42,21 +42,22 @@ public class HTMLBase {
      *  Should go after the QR code
      * */
     public static final String Printout_Start_SecondHalf =
-            "    <!--Some more line breaks... catching a theme here?-->\n" +
-                    "    <br><br><br>\n" +
-                    "    <!--And an under-image header.-->\n" +
-                    "    <h2>Scan this when you enter.</h2>\n" +
+            "<!--Some more line breaks... catching a theme here?-->\n" +
+                    "    <br><br>\n" +
                     "    <!--You guessed it!-->\n" +
                     "    <br>\n" +
                     "    <!--Some nice info text.-->\n" +
-                    "    <p>Scan this code to get the current wait time at</p><p>this polling station and help improve estimates.</p>\n" +
+                    "    <p>Scanning this code will help voters, election officials,</p>\n" +
+                    "    <p> and voting researchers improve estimates. It will also get</p>\n" +
+                    "    <!--<p></p>-->\n" +
+                    "    <p>you the current estimated wait time at this polling station.</p>\n" +
                     "    <!--Too many line breaks? Never heard of it.-->\n" +
                     "    <br><br>\n" +
                     "    <!--And a website link.-->\n" +
                     "    <p>For more information, please visit</p><p>website.com/about</p>\n" +
                     "</div>\n" +
                     "<!--Now, if you thought my line breaks were bad, wait till I get started on page breaks.-->\n" +
-                    "<p style=\"page-break-before: always\">\n";
+                    "<p style=\"page-break-before: always\">";
 
     /** The first half of an ending printout.
      *  Consists of: a big centered div, with some stuff (read the comments) in it.
@@ -65,14 +66,14 @@ public class HTMLBase {
     public static final String Printout_End_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
                     "    <!--Behold, a nice header.-->\n" +
-                    "    <img src=\"/Images/header3.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
+                    "    <img src=\"Resources/Public/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
                     "    <!--Way to many line breaks, coming your way!-->\n" +
-                    "    <br><br><br><br><br><br><br>\n" +
+                    "    <br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
                     "    <h1>Help Estimate the Wait!</h1>\n" +
+                    "    <h2>(Scan this when you get to the desk)</h2>\n" +
                     "    <!--And another line break, to separate it from the image.-->\n" +
-                    "    <br>\n" +
-                    "    <!--This is our big QR code.-->\n";
+                    "    <!--This is our big QR code.-->";
 
     /** The second half of an ending printout.
      *  Consists of: a big centered div, with some stuff (read the comments) in it.
@@ -80,21 +81,22 @@ public class HTMLBase {
      *  Should go after the QR code
      * */
     public static final String Printout_End_SecondHalf =
-            "    <!--Some more line breaks... catching a theme here?-->\n" +
-                    "    <br><br><br>\n" +
-                    "    <!--And an under-image header.-->\n" +
-                    "    <h2>Scan this when you exit.</h2>\n" +
+            "<!--Some more line breaks... catching a theme here?-->\n" +
+                    "    <br><br>\n" +
                     "    <!--You guessed it!-->\n" +
                     "    <br>\n" +
                     "    <!--Some nice info text.-->\n" +
-                    "    <p>Scan this code to find out how long you waited </p><p>and improve estimates for others.</p>\n" +
+                    "    <p>Scan this code to find out how long you waited</p>\n" +
+                    "    <p>and improve estimates for others.</p>\n" +
+                    "    <!--<p></p>-->\n" +
+                    "    <p>Thank you for helping!</p>\n" +
                     "    <!--Too many line breaks? Never heard of it.-->\n" +
                     "    <br><br>\n" +
                     "    <!--And a website link.-->\n" +
                     "    <p>For more information, please visit</p><p>website.com/about</p>\n" +
                     "</div>\n" +
                     "<!--Now, if you thought my line breaks were bad, wait till I get started on page breaks.-->\n" +
-                    "<p style=\"page-break-before: always\">\n";
+                    "<p style=\"page-break-before: always\">";
 
     /** Template of AES-PBKDF2-protector
      * Taken from <a href=https://github.com/MaxLaumeister/PageCrypt>here</a>.

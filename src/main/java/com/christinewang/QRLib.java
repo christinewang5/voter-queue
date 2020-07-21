@@ -110,17 +110,30 @@ public class QRLib {
         return html_img;
     }
 
+    /** A function that gives us back a boxed precinct name.
+     * @param precinct The precinct number.
+     * @param voteService A VoteService connected to the db,
+     *                    with access to the "precinct_names" table.
+     * */
+    public static String getLabel(int precinct, VoteService voteService) {
+        return "<pborder>Precinct "+precinct+": "+voteService.getName(precinct)+"</pborder>";
+    }
+
     /** Returns a single start-QR page.
      * @author John Berberian
      * @param precinct The precinct the QR should be for.
      * @param urlBase The base url for a start-vote.
+     * @param voteService A VoteService connected to the db,
+     *                    with access to the "precinct_names" table.
      * @return An HTML page, ready to be handed to Spark.
      * */
-    public static String getStart_Printout(int precinct, String urlBase)
+    public static String getStart_Printout(int precinct, String urlBase,
+                                           VoteService voteService)
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_Start_FirstHalf+
-                getQR(precinct, urlBase, false)+
+                getQR(precinct, urlBase, true)+
+                getLabel(precinct, voteService) +
                 HTMLBase.Printout_Start_SecondHalf+HTMLBase.Printout_Foot;
     }
 
@@ -128,13 +141,17 @@ public class QRLib {
      * @author John Berberian
      * @param precinct The precinct the QR should be for.
      * @param urlBase The base url for an end-vote.
+     * @param voteService A VoteService connected to the db,
+     *                    with access to the "precinct_names" table.
      * @return An HTML page, ready to be handed to Spark.
      * */
-    public static String getEnd_Printout(int precinct, String urlBase)
+    public static String getEnd_Printout(int precinct, String urlBase,
+                                         VoteService voteService)
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_End_FirstHalf+
-                getQR(precinct, urlBase, false)+
+                getQR(precinct, urlBase, true)+
+                getLabel(precinct, voteService) +
                 HTMLBase.Printout_End_SecondHalf+HTMLBase.Printout_Foot;
     }
 
@@ -144,9 +161,12 @@ public class QRLib {
      * @param endPrecinct The ending precinct number. All ints between this
      *                    and startPrecinct will be used as precinct nums.
      * @param urlBase The base url for a start-vote.
+     * @param voteService A VoteService connected to the db,
+     *                    with access to the "precinct_names" table.
      * @return An HTML page, ready to be handed to spark and printed multi-page.
      * */
-    public static String getStart_Printouts(int startPrecinct, int endPrecinct, String urlBase)
+    public static String getStart_Printouts(int startPrecinct, int endPrecinct,
+                                            String urlBase, VoteService voteService)
             throws IOException, WriterException {
         //Start off with the header (css links, etc)
         String bigPage = HTMLBase.Printout_Head;
@@ -154,7 +174,8 @@ public class QRLib {
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_Start_FirstHalf+
-                    getQR(i, urlBase, false)+
+                    getQR(i, urlBase, true)+
+                    getLabel(i, voteService) +
                     HTMLBase.Printout_Start_SecondHalf;
         }
         //And add our wonderful footer, which is nothing at the moment.
@@ -169,9 +190,12 @@ public class QRLib {
      * @param endPrecinct The ending precinct number. All ints between this
      *                    and startPrecinct will be used as precinct nums.
      * @param urlBase The base url for an end-vote.
+     * @param voteService A VoteService connected to the db,
+     *                    with access to the "precinct_names" table.
      * @return An HTML page, ready to be handed to spark and printed multi-page.
      * */
-    public static String getEnd_Printouts(int startPrecinct, int endPrecinct, String urlBase)
+    public static String getEnd_Printouts(int startPrecinct, int endPrecinct,
+                                          String urlBase, VoteService voteService)
             throws IOException, WriterException {
         //Start off with the header (css links, etc)
         String bigPage = HTMLBase.Printout_Head;
@@ -179,7 +203,8 @@ public class QRLib {
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_End_FirstHalf+
-                    getQR(i, urlBase, false)+
+                    getQR(i, urlBase, true)+
+                    getLabel(i, voteService) +
                     HTMLBase.Printout_End_SecondHalf;
         }
         //And add our wonderful footer, which is nothing at the moment.

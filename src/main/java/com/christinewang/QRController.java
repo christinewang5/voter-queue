@@ -2,9 +2,7 @@ package com.christinewang;
 
 import io.javalin.http.Handler;
 
-import static com.christinewang.Application.LOG;
-import static com.christinewang.Application.HTTP_OK;
-import static com.christinewang.Application.HTTP_BAD_REQUEST;
+import static com.christinewang.Application.*;
 import static com.christinewang.QRLib.*;
 import static com.christinewang.QRLib.getEnd_Printout;
 
@@ -20,7 +18,7 @@ public class QRController {
         try {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             String baseUrl = WEB_HOST + "/start_vote/";
-            String QR_embed = getStart_Printout(precinct, baseUrl);
+            String QR_embed = getStart_Printout(precinct, baseUrl, voteService);
             ctx.status(HTTP_OK);
             ctx.html(QR_embed);
         } catch (Exception e) {
@@ -33,7 +31,7 @@ public class QRController {
         try {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
             String baseUrl = WEB_HOST + "/end_vote/";
-            String QR_embed = getEnd_Printout(precinct, baseUrl);
+            String QR_embed = getEnd_Printout(precinct, baseUrl, voteService);
             ctx.status(HTTP_OK);
             ctx.html(QR_embed);
         } catch (Exception e) {
@@ -59,7 +57,7 @@ public class QRController {
     public static Handler all_QR_startHandler = ctx -> {
         try {
             String baseUrl = WEB_HOST + "/start_vote/";
-            String accumulateAll = getStart_Printouts(MIN_PRECINCT, MAX_PRECINCT, baseUrl);
+            String accumulateAll = getStart_Printouts(MIN_PRECINCT, MAX_PRECINCT, baseUrl, voteService);
             ctx.status(HTTP_OK);
             ctx.html(accumulateAll);
         } catch (Exception e) {
@@ -71,7 +69,7 @@ public class QRController {
     public static Handler all_QR_endHandler = ctx -> {
         try {
             String baseUrl = WEB_HOST + "/end_vote/";
-            String accumulateAll = getEnd_Printouts(MIN_PRECINCT, MAX_PRECINCT, baseUrl);
+            String accumulateAll = getEnd_Printouts(MIN_PRECINCT, MAX_PRECINCT, baseUrl, voteService);
             ctx.status(HTTP_OK);
             ctx.html(accumulateAll);
         } catch (Exception e) {
