@@ -4,10 +4,7 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
 import java.sql.SQLDataException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
@@ -261,6 +258,20 @@ public class VoteController {
 
     public static Handler getWaitTimeOverview = ctx -> {
         List<VoteCompleteModel> waitTimes = voteService.getWaitTimeOverview();
+        boolean found=false;
+        for (int j=MIN_PRECINCT; j<=MAX_PRECINCT; j++) {
+            found=false;
+            for (VoteCompleteModel v : waitTimes) {
+                if (v.getPrecinct()==j) {
+                    found=true;
+                }
+            }
+            if (! found) {
+                waitTimes.add(new VoteCompleteModel(j,-1,voteService.getName(j)));
+            }
+        }
+        Comparator<VoteCompleteModel> sortByPrec = Comparator.comparingInt((VoteCompleteModel v) -> v.getPrecinct());
+        waitTimes.sort(sortByPrec);
         ctx.json(waitTimes);
     };
 }

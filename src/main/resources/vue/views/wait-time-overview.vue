@@ -14,7 +14,7 @@
                 <tr v-for="wt in waitTimes">
                     <td>{{wt.precinct}}</td>
                     <td>{{wt.name}}</td>
-                    <td>{{wt.waitTime}}</td>
+                    <td>{{wt.waitTime==-1 ? "--":wt.waitTime}}</td>
                 </tr>
                 </tbody>
             </template>
