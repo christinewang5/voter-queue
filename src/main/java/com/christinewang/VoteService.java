@@ -4,6 +4,7 @@ import org.sql2o.Connection;
 import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
+import java.sql.SQLDataException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class VoteService {
     }
 
     public VoteCompleteModel getWaitTime(int precinct) throws Exception {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<VoteCompleteModel> waitTime = conn.createQuery("SELECT * FROM " +
                         "(" +
                         "SELECT a.precinct,avg(waittime) AS waittime FROM " +
@@ -74,7 +75,7 @@ public class VoteService {
                     .addParameter("epoch", epoch)
                     .executeAndFetch(VoteCompleteModel.class);
             conn.commit();
-            if (waitTime.isEmpty()) throw new Exception("No data for precinct.");
+            if (waitTime.isEmpty()) throw new SQLDataException("No data for precinct.");
             return waitTime.get(0);
         }
     }
@@ -106,7 +107,7 @@ public class VoteService {
     }
 
     public List<VoteCompleteModel> getWaitTimeOverview() {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT a.precinct,waittime,name FROM " +
                         "(" +
                         "SELECT a.precinct,avg(waitTime) AS waitTime FROM " +
@@ -130,7 +131,7 @@ public class VoteService {
      * @return A List of VoteModel, representing the votes for the precinct
      */
     public List<VoteModel> getPrecinctVotes(int precinct) {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<VoteModel> votes = conn.createQuery("SELECT * FROM vote WHERE precinct=:precinct AND starttime>=:epoch")
                     .addParameter("precinct", precinct)
                     .addParameter("epoch", epoch)
@@ -146,7 +147,7 @@ public class VoteService {
      * the complete votes for the precinct
      */
     public List<VoteCompleteModel> getPrecinctCompleteVotes(int precinct) {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<VoteCompleteModel> votes = conn.createQuery("SELECT * FROM complete_vote WHERE precinct=:precinct")
                 .addParameter("precinct", precinct)
                 .executeAndFetch(VoteCompleteModel.class);
@@ -160,7 +161,7 @@ public class VoteService {
      * @return The precinct number.
      * */
     public int getPrecinct(UUID uuid) {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<Integer> precincts = conn.createQuery("SELECT precinct FROM vote WHERE uuid=:uuid AND starttime>=:epoch")
                     .addParameter("uuid",uuid)
                     .addParameter("epoch",epoch)
@@ -180,7 +181,7 @@ public class VoteService {
      * @return The precinct's name.
      * */
     public String getName(int precinct) {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<String> names = conn.createQuery("SELECT name FROM precinct_names WHERE precinct=:precinct")
                     .addParameter("precinct",precinct)
                     .executeAndFetch(String.class);
@@ -197,7 +198,7 @@ public class VoteService {
      * @return The List< NameModel > of names.
      * */
     public List<NameModel> getPrecinctNameList() {
-        try (Connection conn = sql2o.open()) {
+        try (Connection conn = sql2o.beginTransaction()) {
             List<NameModel> names = conn.createQuery("SELECT * FROM precinct_names")
                     .executeAndFetch(NameModel.class);
             conn.commit();

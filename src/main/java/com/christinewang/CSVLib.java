@@ -53,7 +53,7 @@ public class CSVLib {
     public static void logNameReset() {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
             (voteService.CSVLogEvent(getNow(),"RESETNAMES")){
@@ -73,7 +73,7 @@ public class CSVLib {
     public static void logStart(int precinct, UUID uuid) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
             (voteService.CSVLogEvent(getNow(),"START", uuid, precinct)){
@@ -95,7 +95,7 @@ public class CSVLib {
     public static void logIncompleteMigrate(int precinctOld,int precinctNew, UUID uuidOld, UUID uuidNew) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
             (voteService.CSVLogEvent(getNow(),"MIGRATE.INCOMPLETE", uuidOld, uuidNew,
@@ -118,7 +118,7 @@ public class CSVLib {
     public static void logCompleteMigrate(int precinctOld,int precinctNew, UUID uuidOld, UUID uuidNew) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
                 (voteService.CSVLogEvent( getNow(),"MIGRATE.COMPLETE",
@@ -139,7 +139,7 @@ public class CSVLib {
     public static void logEnd(int precinct, UUID uuid) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
                 (voteService.CSVLogEvent( getNow(),"END", uuid, precinct)){
@@ -160,7 +160,7 @@ public class CSVLib {
     public static void logNC_BadUUID(int precinct, UUID uuid) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
                 (voteService.CSVLogEvent(getNow(), "NOCHANGE.BADUUID", uuid, precinct)){
@@ -182,7 +182,7 @@ public class CSVLib {
     public static void logNC_LostUUID(int precinct, int precinctRegistered, UUID uuid) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
                 (voteService.CSVLogEvent(getNow(), "NOCHANGE.LOSTUUID",
@@ -204,7 +204,7 @@ public class CSVLib {
     public static void logNC_DoubleScan(int precinct, UUID uuid) {
         //Only run if the starting check passed.
         if (isFileWriteable) {
-            //Surrounded in try/catch in case some error was overlooked.
+            //Internally, surrounded in try/catch in case some error was overlooked.
             if
                 //Write our status string.
                 (voteService.CSVLogEvent(getNow(), "" +
@@ -222,7 +222,7 @@ public class CSVLib {
      * @author John Berberian
      * */
     public static Date getNow() {
-        return new Date();
+        return (new Date());
     }
 
     /** Parses a CSV, will convert quoted ints to ints, e.g. "1" -> 1.

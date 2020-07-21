@@ -35,6 +35,7 @@ public class Application {
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
+        CSVLib.logInit();
         //A random string, to prevent attackers from throwing malicious post requests at us.
         String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",15);
 
