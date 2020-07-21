@@ -2,11 +2,16 @@ package com.christinewang;
 
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.vue.VueComponent;
+import org.apache.tools.ant.util.ReaderInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
+import spark.utils.IOUtils;
+import sun.nio.cs.UTF_8;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -78,8 +83,10 @@ public class Application {
             LOG.info(uploadsalt);
             ctx.uploadedFiles(uploadsalt).forEach(file -> {
                 try {
+                    StringWriter writer = new StringWriter();
+                    IOUtils.copy(file.getContent(), writer);
                     //Gets the contents as a string.
-                    String fileContent = new String(file.getContent().readAllBytes());
+                    String fileContent = writer.toString();
                     //Parses the contents, and gets a List of the columns.
                     List<ArrayList> cols = CSVLib.parseCSV(fileContent);
                     //Then refreshes the names, using the first two columns.
