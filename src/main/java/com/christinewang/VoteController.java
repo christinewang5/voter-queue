@@ -42,7 +42,7 @@ public class VoteController {
             String waitString;
             try {
                 waitString = "The current wait time for precinct " + precinct + ", " + voteService.getName(precinct) + " is: " +
-                         + " minute(s).";
+                        String.format("%.2f",voteService.getWaitTime(precinct).getWaitTime()) + " minute(s).";
             }
             //Unless we have no data.
             /*if (voteService.getWaitTime(precinct)==null ||
@@ -55,7 +55,7 @@ public class VoteController {
             //If the person has already voted in this precinct, log it.
             if (hasAlreadyVoted(uuid,voteService,precinct)) {
                 //But give them no indication that anything is wrong.
-                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.html("It looks like you've already gone through.\n" +
                         "You can go again, unless you're trying to mess up our data.\n\n" +
@@ -66,7 +66,7 @@ public class VoteController {
             //If the person has already voted in a different precinct, log it.
             else if (hasAlreadyVoted(uuid,voteService)){
                 //But give them no indication that anything is wrong.
-                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.html("It looks like you've already gone through.\n" +
                         "You can go again, unless you're trying to mess up our data.\n\n" +
@@ -79,7 +79,7 @@ public class VoteController {
             //If the person has already scanned, log it.
             else if (isValid(uuid, voteService, precinct)){
                 //But give them no indication that anything is wrong.
-                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.html("You scanned this before, but you're here again.\n" +
                         "That's fine, we'll just pretend that you initially arrived now.\n\n" +
@@ -90,7 +90,7 @@ public class VoteController {
             //If the person has already scanned in a different precinct, log it.
             else if (isValid(uuid, voteService)){
                 //But give them no indication that anything is wrong.
-                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
                 /*ctx.html("Hm, you seem to have transferred from another precinct.\n" +
                         "That's fine, we'll just pretend you started here.\n\n"+
@@ -102,7 +102,7 @@ public class VoteController {
             }
             //And then our nice normal case.
             else {
-                ctx.html("Thanks for checking in! Remember to check out at the desk.\n\n" +
+                ctx.html("Thanks for checking in! Remember to check out at the end.\n\n" +
                         waitString);
 
                 LOG.info("start vote handler");
