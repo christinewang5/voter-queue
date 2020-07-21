@@ -231,7 +231,11 @@ public class CSVLib {
      * */
     public static List<ArrayList> parseCSV(String fileContent) {
         ArrayList<ArrayList> columns = new ArrayList<ArrayList>();
-        String[] rows = fileContent.split("\n");
+        String regex="\n";
+        if (fileContent.contains("\r\n")) {
+            regex="\r\n";
+        }
+        String[] rows = fileContent.split(regex);
         boolean isInt=false;
         for (String row : rows) {
             int i=0;
