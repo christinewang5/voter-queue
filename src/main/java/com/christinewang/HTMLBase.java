@@ -27,7 +27,7 @@ public class HTMLBase {
     public static final String Printout_Start_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
                     "    <!--Behold, a nice header.-->\n" +
-                    "    <img src=\"Images/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
+                    "    <img src=\"/Images/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
                     "    <!--Way to many line breaks, coming your way!-->\n" +
                     "    <br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
@@ -66,7 +66,7 @@ public class HTMLBase {
     public static final String Printout_End_FirstHalf =
             "<div style=\"text-align: center;\">\n" +
                     "    <!--Behold, a nice header.-->\n" +
-                    "    <img src=\"Images/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
+                    "    <img src=\"/Images/header4.png\" width=\"910\" height=\"193\" alt=\"banner\" >\n" +
                     "    <!--Way to many line breaks, coming your way!-->\n" +
                     "    <br><br><br><br><br><br>\n" +
                     "    <!--A nice sub-banner.-->\n" +
