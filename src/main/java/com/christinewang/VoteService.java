@@ -5,10 +5,7 @@ import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
 import java.sql.SQLDataException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.christinewang.Application.LOG;
@@ -297,6 +294,37 @@ public class VoteService {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /** Gets all the CSV events in the DB.
+     * @return A List of CSVEvents.
+     * */
+    public List<CSVEvent> getCSVEvents() {
+        try (Connection conn = sql2o.beginTransaction()) {
+            List<CSVEvent> events = conn.createQuery("SELECT * FROM csv_log")
+                    .executeAndFetch(CSVEvent.class);
+            return events;
+        } catch (Exception e) {
+            LOG.error("In getCSVEvents: error getting events!");
+            return new ArrayList<CSVEvent>();
+        }
+    }
+
+    /** Gets the CSV events in the DB since a certain date.
+     * @param temp_epoch A date, such that we should only return events
+     *              that occurred after that date.
+     * @return A List of CSVEvents.
+     * */
+    public List<CSVEvent> getCSVEvents(Date temp_epoch) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            List<CSVEvent> events = conn.createQuery("SELECT * FROM csv_log WHERE timeStamp>=:epoch")
+                    .addParameter("epoch", temp_epoch)
+                    .executeAndFetch(CSVEvent.class);
+            return events;
+        } catch (Exception e) {
+            LOG.error("In getCSVEvents: error getting events!");
+            return new ArrayList<CSVEvent>();
         }
     }
 

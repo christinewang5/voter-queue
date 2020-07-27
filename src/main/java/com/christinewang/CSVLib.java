@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collector;
 
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.voteService;
@@ -264,5 +265,28 @@ public class CSVLib {
             }
         }
         return columns;
+    }
+
+    /** Gets a string representation of the CSV log.
+     * @return A string representation of the CSV file, with newlines
+     * separating lines, and commas separating values in each line.
+     * */
+    public static String getCSVLog() {
+        List<CSVEvent> events = voteService.getCSVEvents();
+        StringBuilder lines = new StringBuilder();
+        events.forEach((event) -> lines.append(event.toString()+"\n"));
+        return lines.toString().trim();
+    }
+
+    /** Gets a string representation of all the CSV log's event since a certain Date.
+     * @param epoch The date to start looking for events from.
+     * @return A string representation of the CSV file, with newlines
+     * separating lines, and commas separating values in each line.
+     * */
+    public static String getCSVLog(Date epoch) {
+        List<CSVEvent> events = voteService.getCSVEvents(epoch);
+        StringBuilder lines = new StringBuilder();
+        events.forEach((event) -> lines.append(event.toString()+"\n"));
+        return lines.toString().trim();
     }
 }
