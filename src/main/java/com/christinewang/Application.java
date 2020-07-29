@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.christinewang.AdminController.upload;
 import static com.christinewang.CryptoLib.getRandomString;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
@@ -33,13 +34,14 @@ public class Application {
     public static final int HTTP_OK = 200;
     public static final int HTTP_BAD_REQUEST = 400;
     public static VoteService voteService;
+    //A random string, to prevent attackers from throwing malicious post requests at us.
+    public static String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",16);
 
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
         voteService = new VoteService(sql2o);
+        String csvPath=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",100);
         CSVLib.logInit();
-        //A random string, to prevent attackers from throwing malicious post requests at us.
-        String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",15);
 
         Javalin app = Javalin.create(config -> {
             config.enableWebjars();
@@ -68,48 +70,14 @@ public class Application {
             get("/all_QR_wait", QRController.all_QR_waitHandler);
 
             get("/admin", ctx -> {
-                ctx.html(CryptoLib.get_adminpage(uploadsalt));
+                ctx.html(CryptoLib.get_adminpage(uploadsalt,csvPath));
             });
+            get("/get_csv/"+csvPath+"/VoterQueueLog.csv",AdminController.csvStaticIsh);
 
         });
 
         //Listener for handling uploaded files.
-        app.post("/upload-precinctnames", ctx -> {
-            //Converted to Atomic, because otherwise Java was yelling about final variables in lambdas.
-            AtomicBoolean success= new AtomicBoolean(true);
-            LOG.info(uploadsalt);
-            ctx.uploadedFiles(uploadsalt).forEach(file -> {
-                try {
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(file.getContent(), writer);
-                    //Gets the contents as a string.
-                    String fileContent = writer.toString();
-                    //Parses the contents, and gets a List of the columns.
-                    List<ArrayList> cols = CSVLib.parseCSV(fileContent);
-                    //Then refreshes the names, using the first two columns.
-                    List<Integer> precincts = cols.get(0);
-                    List<String> names = cols.get(1);
-                    //LOG.info("csv parsed");
-                    try {
-                        //LOG.info("before changenames");
-                        if (!voteService.changeNames(precincts, names)) {
-                            throw new IOException("Bad csv format!");
-                        }
-                        //LOG.info("after changenames");
-                    } catch (IOException e) {
-                        LOG.error("problem in changeNames.");
-                    }
-                } catch (IOException e) {
-                    LOG.error("upload-precinctnames: cannot read file.");
-                    success.set(false);
-                }
-            });
-            if (success.get()) {
-                ctx.html("Upload complete");
-            } else {
-                ctx.html("Upload failure! Wrong format?");
-            }
-        });
+        app.post("/upload-precinctnames", upload);
 
         app.error(404, ctx -> ctx.result("Page does not exist."));
         LOG.info("Server started, all routes mapped successfully.\n");

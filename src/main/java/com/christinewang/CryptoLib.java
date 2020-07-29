@@ -33,7 +33,7 @@ public class CryptoLib {
      *               and submitting their own POST request.
      * @return The secured page, in html format.
      * */
-    public static String get_adminpage(String upsalt) throws Exception {
+    public static String get_adminpage(String upsalt, String csvpath) throws Exception {
         //LOG.info(upsalt);
         //Make an empty initialization vector.
         int ivSize = 16;
@@ -46,7 +46,9 @@ public class CryptoLib {
         //Get the non-base64 version of the key.
         byte[] dec_key = Base64.decode(key);
         //Encrypt the admin page, remembering to replace the upload filename.
-        String replaced = HTMLBase.admin.replace("REPLACEME",upsalt);
+        String replaced = HTMLBase.admin
+                .replace("REPLACEME",upsalt)
+                .replace("REPLACETHIS",csvpath);
         //LOG.info(replaced);
         byte[] encrypted = encrypt(replaced,dec_key,iv,defaultMode);
         //And get the base64 version of the encrypted admin page.

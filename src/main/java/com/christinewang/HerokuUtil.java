@@ -60,7 +60,7 @@ public class HerokuUtil {
                 }
             });
 
-            LOG.error(e.toString());
+            LOG.error(e.toString()+" - You are running locally.");
         }
 
         return sql2o;

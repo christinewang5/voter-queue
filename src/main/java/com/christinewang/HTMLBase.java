@@ -381,15 +381,17 @@ public class HTMLBase {
                     "<html lang=\"en\">\n" +
                     "<head>\n" +
                     "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>Admin panel</title>\n" +
+                    "    <title>Title</title>\n" +
                     "</head>\n" +
                     "\n" +
                     "<body>\n" +
-                    "<h1>Upload precinct names</h1>\n" +
+                    "<h1>Upload example</h1>\n" +
                     "<form method=\"post\" action=\"/upload-precinctnames\" enctype=\"multipart/form-data\">\n" +
                     "    <input type=\"file\" name=\"REPLACEME\">\n" +
                     "    <button>Submit</button>\n" +
                     "</form>\n" +
+                    "<h1>Download csv</h1>\n" +
+                    "<a href=\"/get_csv/REPLACETHIS/VoterQueueLog.csv\" target=\"_blank\">Click this link.</a>\n" +
                     "</body>\n" +
                     "</html>";
 }
