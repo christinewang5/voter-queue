@@ -3,9 +3,13 @@ package com.christinewang;
 import org.postgresql.util.Base64;
 
 import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
 import static com.christinewang.HTMLBase.protected_template;
 import static com.christinewang.Application.LOG;
@@ -15,46 +19,48 @@ import static com.christinewang.Application.LOG;
 /** A bunch of functions to encrypt the admin panel, securing it.
  * */
 public class CryptoLib {
-    //This is a b64 of a PBKDF2-hash of the password "voting is awesome". The java implementation
-    //of PBKDF2 wasn't working as expected, so I hashed it in python, and copied it here.
-    //If you need it changed, see CHANGEPASS.txt.
-
-    //base64(32 byte PBKDF2 hash of "voting is awesome", salted with salt (see below), with 100 iterations.)
-    //unbase64'd version is used as encryption key for admin panel.
-    private static final String key="pqG9ShMtGLJf2zRHONuB7o8/b5+74G8hx67NtM82jaY=";
-    //base64(random 32 bytes)
-    private static final String salt="zPojvGlGnA365QF0vRURviCDqWaQyhPfde4jUh+rNFE=";
+    //This is the password for the admin panel.
+    private static final String admin_password="voting is awesome";
+    //PBKDF2 hashing mode.
+    private static final String hashingMode="PBKDF2WithHmacSHA256";
     //AES encryption mode.
-    private static final String defaultMode="AES/CBC/NoPadding";
+    private static final String defaultMode="AES/CBC/PKCS5Padding";
 
     /** A function to get the secured admin page.
      * @param upsalt The filename to use for uploading. Should be randomized, so that
      *               an attacker cannot change the precinct names by guessing the filename
      *               and submitting their own POST request.
+     * @param csvpath A secret random string, made so that only authorized people
+     *                can download the csv data.
      * @return The secured page, in html format.
      * */
     public static String get_adminpage(String upsalt, String csvpath) throws Exception {
-        //LOG.info(upsalt);
         //Make an empty initialization vector.
         int ivSize = 16;
         byte[] iv = new byte[ivSize];
-        //And fill it with random bytes. The IV MUST be random.
+        //And fill it with random bytes. The iv MUST be random.
         SecureRandom random = new SecureRandom();
         random.nextBytes(iv);
         //Get the base64 version of that, to feed to the javascript later.
         String iv_b64 = Base64.encodeBytes(iv);
-        //Get the non-base64 version of the key.
-        byte[] dec_key = Base64.decode(key);
-        //Encrypt the admin page, remembering to replace the upload filename.
+        //A salt with unprintable characters resulted in some problems, so we're only using printables here.
+        byte[] salt=getRandomString(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+                32).getBytes();
+        //We need a base64 version, to throw at the javascript.
+        String salt_b64 = Base64.encodeBytes(salt);
+        //Generate the pbkdf2 hash, 50k iterations should be fine.
+        byte[] dec_key = pbkdf2(admin_password,salt,50000,32, hashingMode);
+        //Replace the upload filename and csvpath.
         String replaced = HTMLBase.admin
                 .replace("REPLACEME",upsalt)
                 .replace("REPLACETHIS",csvpath);
-        //LOG.info(replaced);
+        //Then encrypt the admin page.
         byte[] encrypted = encrypt(replaced,dec_key,iv,defaultMode);
         //And get the base64 version of the encrypted admin page.
         String encrypted_b64 = java.util.Base64.getEncoder().encodeToString(encrypted);
         //Assemble that into a nice JSON, for injection into the template javascript decryptor.
-        String enc_json = String.format("{\"salt\":\"%s\",\"iv\":\"%s\",\"data\":\"%s\"}",salt,iv_b64,encrypted_b64);
+        String enc_json = String.format("{\"salt\":\"%s\",\"iv\":\"%s\",\"data\":\"%s\"}",
+                salt_b64,iv_b64,encrypted_b64);
         //And throw it in. We're done.
         String concat = protected_template.replace("/*ENCRYPTED_PAYLOAD}}*/\"\"",enc_json);
         return concat;
@@ -73,18 +79,6 @@ public class CryptoLib {
     public static byte[] encrypt(String plainText, byte[] key, byte[] iv, String mode) throws Exception {
         //Turn the plaintext into bytes.
         byte[] clean = plainText.getBytes();
-        //Check how much padding we need to do.
-        int numtoadd=16-Math.floorMod(clean.length,16);
-        //Allocate a new byte[] to hold that.
-        byte[] newclean = new byte[clean.length+numtoadd];
-        //Copy in what we have.
-        System.arraycopy(clean,0,newclean,0,clean.length);
-        //And pad what's left with null bytes.
-        for (int i=clean.length;i<newclean.length;i++) {
-            //Default byte value should be 0, so this might not be needed.
-            //Doesn't hurt to make sure, though.
-            newclean[i]=(byte)0;
-        }
         //Put the IV in a format that the cipher will be able to use.
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
         //Put the key in a format that the cipher will be able to use.
@@ -95,7 +89,7 @@ public class CryptoLib {
         //Give the cipher the key and iv, and tell it to encrypt.
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
         //Now give it the plaintext (in bytes), and let it encrypt.
-        byte[] encrypted = cipher.doFinal(newclean);
+        byte[] encrypted = cipher.doFinal(clean);
         //It's encrypted!
         return encrypted;
     }
@@ -117,5 +111,24 @@ public class CryptoLib {
         }
         //And return our wonderful random string.
         return retvar.toString();
+    }
+
+    /** A function that hashes a password with an arbitrary algorithm.
+     * It's named pbkdf2 because that's all that it's used for.
+     * @param password The password to hash.
+     * @param salt The salt to use for the password hash.
+     * @param iterations The number of times to hash it.
+     * @param keyLength The size of hash to return.
+     * @param mode The hashing mode to use. Always "PBKDF2WithHmacSHA256".
+     * @return A byte[], containing the password hash.
+     * */
+    public static byte[] pbkdf2(String password, byte[] salt, int iterations, int keyLength, String mode)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        char[] chars = password.toCharArray();
+
+        PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, keyLength*8);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance(mode);
+        byte[] hash = skf.generateSecret(spec).getEncoded();
+        return hash; //toHex(hash);
     }
 }

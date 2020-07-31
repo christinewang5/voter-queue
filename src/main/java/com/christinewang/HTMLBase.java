@@ -12,7 +12,7 @@ public class HTMLBase {
     /** A header for the HTML. Currently contains just CSS links.
      * */
     public static final String Printout_Head =
-                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/Fonts/Lato/latofonts.css\">\n" +
+            "<link rel=\"stylesheet\" type=\"text/css\" href=\"/Fonts/Lato/latofonts.css\">\n" +
                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/Fonts/Lato/latostyle.css\">\n";
 
     /** A footer for the HTML. Currently contains nothing.
@@ -237,7 +237,10 @@ public class HTMLBase {
                     "        Protected by <a href=\"https://www.maxlaumeister.com/pagecrypt/\">PageCrypt</a>\n" +
                     "    </div>\n" +
                     "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js\"></script>\n" +
-                    "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js\"></script>" +
+                    "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js\"></script>\n" +
+                    "    <script src=\"js/hex2a.js\"></script>\n" +
+                    "    <script src=\"js/greasysomething.js\"></script>\n" +
+                    "    <script src=\"js/bundle.js\"></script>\n" +
                     "    <script>\n" +
                     "        /*! srcdoc-polyfill - v0.1.1 - 2013-03-01\n" +
                     "        * http://github.com/jugglinmike/srcdoc-polyfill/\n" +
@@ -365,7 +368,9 @@ public class HTMLBase {
                     "            var _cp = CryptoJS.lib.CipherParams.create({\n" +
                     "                ciphertext: contents\n" +
                     "            });\n" +
-                    "            var key = CryptoJS.PBKDF2(password, salt, { keySize: 256/32, iterations: 100 });\n" +
+                    "            //var key = CryptoJS.PBKDF2(password, salt, { keySize: 256/32, iterations: 100 });\n" +
+                    "            var badkey = js_crypto.pbkdf2Sync(password, hex2a(salt.toString()), 50000, 32, 'sha256');\n" +
+                    "            var key = CryptoJS.lib.ByteArray(Array.from(badkey));\n" +
                     "            var decrypted = CryptoJS.AES.decrypt(_cp, key, {iv: iv});\n" +
                     "            \n" +
                     "            return decrypted.toString(CryptoJS.enc.Utf8);\n" +
