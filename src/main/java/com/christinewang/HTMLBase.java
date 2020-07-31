@@ -109,7 +109,7 @@ public class HTMLBase {
                     "    <meta charset=\"utf-8\">\n" +
                     "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
                     "    <meta name=\"robots\" content=\"noindex, nofollow\">\n" +
-                    "    <title>Password Protected Page</title>\n" +
+                    "    <title>Admin Page</title>\n" +
                     "    <style>\n" +
                     "        html, body {\n" +
                     "            margin: 0;\n" +
@@ -386,16 +386,16 @@ public class HTMLBase {
                     "<html lang=\"en\">\n" +
                     "<head>\n" +
                     "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>Title</title>\n" +
+                    "    <title>Admin Page</title>\n" +
                     "</head>\n" +
                     "\n" +
                     "<body>\n" +
-                    "<h1>Upload example</h1>\n" +
+                    "<h1>Upload Precinct Names</h1>\n" +
                     "<form method=\"post\" action=\"/upload-precinctnames\" enctype=\"multipart/form-data\">\n" +
                     "    <input type=\"file\" name=\"REPLACEME\">\n" +
                     "    <button>Submit</button>\n" +
                     "</form>\n" +
-                    "<h1>Download csv</h1>\n" +
+                    "<h1>Download CSV Data</h1>\n" +
                     "<a href=\"/get_csv/REPLACETHIS/VoterQueueLog.csv\" target=\"_blank\">Click this link.</a>\n" +
                     "</body>\n" +
                     "</html>";
