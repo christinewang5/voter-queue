@@ -13,9 +13,9 @@ import static com.christinewang.Application.*;
 import static com.christinewang.CSVLib.getCSVLog;
 
 public class AdminController {
-    public static int MIN_PRECINCT = 0;
+    public static int MIN_PRECINCT;
     //Set to 10 for testing purposes, will be set to real value later.
-    public static int MAX_PRECINCT = 10;
+    public static int MAX_PRECINCT;
 
     public static Handler upload = ctx -> {
         //Converted to Atomic, because otherwise Java was yelling about final variables in lambdas.

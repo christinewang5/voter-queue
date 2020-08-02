@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.christinewang.AdminController.upload;
+import static com.christinewang.AdminController.*;
 import static com.christinewang.CryptoLib.getRandomString;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
@@ -38,6 +38,8 @@ public class Application {
         voteService = new VoteService(sql2o);
         String csvPath=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",100);
         CSVLib.logInit();
+        MAX_PRECINCT = voteService.getMaxPrecinct();
+        MIN_PRECINCT = voteService.getMinPrecinct();
 
         Javalin app = Javalin.create(config -> {
             config.enableWebjars();

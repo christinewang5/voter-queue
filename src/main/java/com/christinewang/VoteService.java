@@ -18,6 +18,10 @@ public class VoteService {
     //Sets the current epoch to whenever the server started.
     private Date epoch = new Date();
 
+    //These will be used if the database cannot be read.
+    public static final int DEFAULT_MINPREC=0;
+    public static final int DEFAULT_MAXPREC=10;
+
     public VoteService(Sql2o sql2o) {
         this.sql2o = sql2o;
     }
@@ -375,6 +379,37 @@ public class VoteService {
         }
         //Reset the epoch
         epoch=new Date();
+        CSVLib.logNameReset();
         return true;
+    }
+
+    /** Gets the max precinct number in the db.
+     * @return The result of "SELECT MAX(precinct) FROM precinct_names", or
+     * a default value, defined in this class.
+     * */
+    public int getMaxPrecinct() {
+        try (Connection conn = sql2o.beginTransaction()) {
+            Query q = conn.createQuery("SELECT MAX(precinct) FROM precinct_names");
+            Integer maxprec = q.executeAndFetch(Integer.class).get(0);
+            return maxprec;
+        } catch (Exception e) {
+            LOG.error(String.format("Could not get max precinct! Defaulting to %d.",DEFAULT_MAXPREC));
+            return DEFAULT_MAXPREC;
+        }
+    }
+
+    /** Gets the min precinct number in the db.
+     * @return The result of "SELECT MIN(precinct) FROM precinct_names", or
+     * a default value, defined in this class.
+     * */
+    public int getMinPrecinct() {
+        try (Connection conn = sql2o.beginTransaction()) {
+            Query q = conn.createQuery("SELECT MIN(precinct) FROM precinct_names");
+            Integer minprec = q.executeAndFetch(Integer.class).get(0);
+            return minprec;
+        } catch (Exception e) {
+            LOG.error(String.format("Could not get min precinct! Defaulting to %d.",DEFAULT_MINPREC));
+            return DEFAULT_MINPREC;
+        }
     }
 }
