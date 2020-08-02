@@ -6,12 +6,12 @@ import io.javalin.http.Handler;
 import java.sql.SQLDataException;
 import java.util.*;
 
+import static com.christinewang.AdminController.MAX_PRECINCT;
+import static com.christinewang.AdminController.MIN_PRECINCT;
 import static com.christinewang.Application.voteService;
 import static com.christinewang.Application.LOG;
 import static com.christinewang.Application.HTTP_OK;
 import static com.christinewang.Application.HTTP_BAD_REQUEST;
-import static com.christinewang.QRController.MAX_PRECINCT;
-import static com.christinewang.QRController.MIN_PRECINCT;
 import static com.christinewang.HerokuUtil.*;
 
 

@@ -2,6 +2,8 @@ package com.christinewang;
 
 import io.javalin.http.Handler;
 
+import static com.christinewang.AdminController.MAX_PRECINCT;
+import static com.christinewang.AdminController.MIN_PRECINCT;
 import static com.christinewang.Application.*;
 import static com.christinewang.QRLib.*;
 import static com.christinewang.QRLib.getEnd_Printout;
@@ -10,9 +12,7 @@ public class QRController {
     public static final String WEB_HOST = "https://voter-queue.herokuapp.com";
     //Deprecated because
     //public static final int WEB_PORT = 4567;
-    public static final int MIN_PRECINCT = 0;
-    //Set to 10 for testing purposes, will be set to real value later.
-    public static final int MAX_PRECINCT = 10;
+
 
     public static Handler get_QR_startHandler = ctx -> {
         try {
