@@ -8,7 +8,7 @@ import java.sql.SQLDataException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.christinewang.Application.LOG;
+import static com.christinewang.Application.*;
 
 /**
  * VoteService contains the functions to interact with the database.
@@ -380,6 +380,8 @@ public class VoteService {
         //Reset the epoch
         epoch=new Date();
         CSVLib.logNameReset();
+        startURLs = CryptoLib.get_StartURLs();
+        endURLs = CryptoLib.get_EndURLs();
         return true;
     }
 

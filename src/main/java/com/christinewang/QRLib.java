@@ -15,6 +15,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.christinewang.AdminController.MIN_PRECINCT;
+
 /** Contains methods for generating QR codes
  * @author John Berberian
  * @author Christine Wang
@@ -85,19 +87,30 @@ public class QRLib {
     /** Returns an HTML img QR code for urlBase/precinct.
      * @author John Berberian
      * @param precinct The precinct that the QR code should be for.
-     * @param urlBase The base URL, such that the final url is "urlBase/precinct".
+     * @param urlBase The base URL, such that the final url is "urlBase/urlCode(precinct)".
      * @param hasBreak Specifies whether or not the image should be followed by a br tag.
-     * @return HTML img string of base64-encoded QR code of "urlBase/precinct".
+     * @param type The type of QR to generate. 0 for start, 1 for end, any other number for
+     *             standard (raw), like wait.
+     * @return HTML img string of base64-encoded QR code of "urlBase/urlCode(precinct)".
      * */
-    public static String getQR(int precinct, String urlBase, boolean hasBreak)
+    public static String getQR(int precinct, String urlBase, boolean hasBreak, int type)
             throws IOException, WriterException {
         //If urlBase doesn't end in a slash...
         if (urlBase.charAt(urlBase.length()-1)!='/'){
             //...make sure it does.
             urlBase += "/";
         }
-        //Concat the urlBase and precinct, to get the full url.
-        String full_URL = urlBase+precinct;
+        String full_URL;
+        if (type==0) {
+            //Get the precinct code, shifted by min precinct, for 0-based indexing.
+            full_URL = urlBase + Application.startURLs.get(precinct-MIN_PRECINCT);
+        } else if (type==1) {
+            //Get the precinct code, shifted by min precinct, for 0-based indexing.
+            full_URL = urlBase + Application.endURLs.get(precinct-MIN_PRECINCT);
+        } else {
+            //Concat the urlBase and precinct, to get the full url.
+            full_URL = urlBase + precinct;
+        }
         //And get the base64 QR string for it.
         String b64_enc = createQR_b64(full_URL);
         //Wrap this in an html tag.
@@ -111,11 +124,13 @@ public class QRLib {
     }
 
     /** A function that gives us back a boxed precinct name.
-     * @param precinct The precinct number.
+     * @param index The precinct number relative to minprecinct.
+     * @param minprecinct The min precinct to base our numbering off of.
      * @param voteService A VoteService connected to the db,
      *                    with access to the "precinct_names" table.
      * */
-    public static String getLabel(int precinct, VoteService voteService) {
+    public static String getLabel(int index, VoteService voteService, int minprecinct) {
+        int precinct = minprecinct+index;
         return "<pborder>Precinct "+precinct+": "+voteService.getName(precinct)+"</pborder>";
     }
 
@@ -132,8 +147,8 @@ public class QRLib {
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_Start_FirstHalf+
-                getQR(precinct, urlBase, true)+
-                getLabel(precinct, voteService) +
+                getQR(precinct, urlBase, true, 0)+
+                getLabel(precinct, voteService, MIN_PRECINCT) +
                 HTMLBase.Printout_Start_SecondHalf+HTMLBase.Printout_Foot;
     }
 
@@ -150,8 +165,8 @@ public class QRLib {
             throws IOException, WriterException {
         //Just concatenate a ton of templates, with our QR in the middle.
         return HTMLBase.Printout_Head+HTMLBase.Printout_End_FirstHalf+
-                getQR(precinct, urlBase, true)+
-                getLabel(precinct, voteService) +
+                getQR(precinct, urlBase, true, 1)+
+                getLabel(precinct, voteService, MIN_PRECINCT) +
                 HTMLBase.Printout_End_SecondHalf+HTMLBase.Printout_Foot;
     }
 
@@ -174,8 +189,8 @@ public class QRLib {
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_Start_FirstHalf+
-                    getQR(i, urlBase, true)+
-                    getLabel(i, voteService) +
+                    getQR(i, urlBase, true, 0)+
+                    getLabel(i, voteService, startPrecinct) +
                     HTMLBase.Printout_Start_SecondHalf;
         }
         //And add our wonderful footer, which is nothing at the moment.
@@ -203,8 +218,8 @@ public class QRLib {
         for (int i=startPrecinct;i<=endPrecinct;i++){
             //...concat the template pages, with the QR in the middle.
             bigPage += HTMLBase.Printout_End_FirstHalf+
-                    getQR(i, urlBase, true)+
-                    getLabel(i, voteService) +
+                    getQR(i, urlBase, true, 1)+
+                    getLabel(i, voteService, startPrecinct) +
                     HTMLBase.Printout_End_SecondHalf;
         }
         //And add our wonderful footer, which is nothing at the moment.

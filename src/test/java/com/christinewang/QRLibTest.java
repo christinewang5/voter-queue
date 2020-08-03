@@ -3,10 +3,13 @@ package com.christinewang;
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import io.javalin.core.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -20,6 +23,7 @@ public class QRLibTest {
         boolean works=true;
         works &= check_createQR_b64(false);
         System.out.println(works);
+        System.out.println(get_content("/home/kali/Pictures/qr_2.png"));
     }
     /** Checks that createQR_b64 is working by decoding the QR code, and checking equality.
      * @author John Berberian
@@ -55,5 +59,31 @@ public class QRLibTest {
             }
         }
         return resultUrl.equals(sillyUrl);
+    }
+
+    /** Reads the QR content of a local png image.
+     * @param filepath The path to the QR image.
+     * @return The string content of the QR code.
+     * */
+    public static String get_content(String filepath) throws IOException, NotFoundException {
+        //Read our file
+        byte[] fileContent = FileUtils.readFileToByteArray(new File(filepath));
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+        //And turn it into a png byte array.
+        byte[] png_data = Base64.getDecoder().decode(encodedString);
+        //Turn that into a BufferedImage.
+        ByteArrayInputStream bis = new ByteArrayInputStream(png_data);
+        BufferedImage bImage = ImageIO.read(bis);
+        //And make that into a LuminanceSource.
+        BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(bImage);
+        //Which is turned into a HybridBinarizer
+        HybridBinarizer hybridBinarizer = new HybridBinarizer(source);
+        //Which is turned into a bitmap.
+        BinaryBitmap bitmap = new BinaryBitmap(hybridBinarizer);
+        //We read the QR code from the bitmap.
+        Result result = (new MultiFormatReader()).decode(bitmap);
+        //We grab the string URL from the result.
+        String resultUrl = result.getText();
+        return resultUrl;
     }
 }

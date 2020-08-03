@@ -10,9 +10,6 @@ import static com.christinewang.QRLib.getEnd_Printout;
 
 public class QRController {
     public static final String WEB_HOST = "https://voter-queue.herokuapp.com";
-    //Deprecated because
-    //public static final int WEB_PORT = 4567;
-
 
     public static Handler get_QR_startHandler = ctx -> {
         try {
@@ -45,7 +42,7 @@ public class QRController {
             int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
 
             String baseUrl = WEB_HOST + "/wait_time/";
-            String QR_embed = getQR(precinct, baseUrl, true);
+            String QR_embed = getQR(precinct, baseUrl, true,2);
             ctx.status(HTTP_OK);
             ctx.html(QR_embed);
         } catch (Exception e) {
@@ -84,7 +81,7 @@ public class QRController {
             String accumulateAll = "";
             for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
                 accumulateAll += "<p><strong>QR wait code for precinct " + p + "</strong><p>";
-                accumulateAll += getQR(p, baseURL, true);
+                accumulateAll += getQR(p, baseURL, true, 2);
             }
             ctx.status(HTTP_OK);
             ctx.html(accumulateAll);

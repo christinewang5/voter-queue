@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.christinewang.AdminController.*;
-import static com.christinewang.CryptoLib.getRandomString;
+import static com.christinewang.CryptoLib.*;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 /**
@@ -32,6 +32,8 @@ public class Application {
     public static VoteService voteService;
     //A random string, to prevent attackers from throwing malicious post requests at us.
     public static String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",16);
+    public static List<String> startURLs;
+    public static List<String> endURLs;
 
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
@@ -40,6 +42,8 @@ public class Application {
         CSVLib.logInit();
         MAX_PRECINCT = voteService.getMaxPrecinct();
         MIN_PRECINCT = voteService.getMinPrecinct();
+        endURLs = get_EndURLs();
+        startURLs = get_StartURLs();
 
         Javalin app = Javalin.create(config -> {
             config.enableWebjars();
@@ -54,8 +58,8 @@ public class Application {
 
 
             get("/api/wait_time_overview", VoteController.getWaitTimeOverview);
-            get("/api/start_vote/:precinct", VoteController.startVoteHandler);
-            get("/api/end_vote/:precinct", VoteController.endVoteHandler);
+            get("/api/start_vote/:urlCode", VoteController.startVoteHandler);
+            get("/api/end_vote/:urlCode", VoteController.endVoteHandler);
 
             get("/wait_time/:precinct", VoteController.waitTimeHandler);
 

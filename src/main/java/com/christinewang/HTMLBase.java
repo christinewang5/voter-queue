@@ -1,8 +1,5 @@
 package com.christinewang;
 
-//import static com.christinewang.Controller.WEB_HOST;
-//import static com.christinewang.Controller.WEB_PORT;
-
 /** Contains a bunch of templates for HTML
  * @author John Berberian
  * @author Christine Wang

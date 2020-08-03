@@ -153,7 +153,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + "/wait_time/";
-                String QR_embed = getQR(p, baseUrl, true);
+                String QR_embed = getQR(p, baseUrl, true,2);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e){
@@ -195,7 +195,7 @@ public class Controller {
                 String accumulateAll = "";
                 for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
                     accumulateAll += "<p><strong>QR wait code for precinct " + p + "</strong><p>";
-                    accumulateAll += getQR(p, baseURL, true);
+                    accumulateAll += getQR(p, baseURL, true,2);
                 }
                 res.status(HTTP_OK);
                 return accumulateAll;

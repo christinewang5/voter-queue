@@ -1,5 +1,6 @@
 package com.christinewang;
 
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
@@ -8,10 +9,7 @@ import java.util.*;
 
 import static com.christinewang.AdminController.MAX_PRECINCT;
 import static com.christinewang.AdminController.MIN_PRECINCT;
-import static com.christinewang.Application.voteService;
-import static com.christinewang.Application.LOG;
-import static com.christinewang.Application.HTTP_OK;
-import static com.christinewang.Application.HTTP_BAD_REQUEST;
+import static com.christinewang.Application.*;
 import static com.christinewang.HerokuUtil.*;
 
 
@@ -20,7 +18,8 @@ public class VoteController {
 
     public static Handler startVoteHandler = ctx -> {
         try {
-            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
+            String precinctStr = ctx.pathParam("urlCode", String.class).check(s -> startURLs.contains(s)).get();
+            int precinct = MIN_PRECINCT + startURLs.indexOf(precinctStr);
             UUID uuid;
             try {
                 //Try to see if they already have a cookie.
@@ -107,6 +106,9 @@ public class VoteController {
             LOG.info(String.format("precinct: %d", precinct));
             LOG.info(String.format("uuid start: %s \n", uuid2));
             CSVLib.logStart(precinct,uuid2);
+        }catch (BadRequestResponse e) {
+            ctx.status(HTTP_BAD_REQUEST);
+            LOG.error("StartVoteHandler: Bad precinct code requested by user!");
         }
         //If something unforeseen goes wrong, log it.
         catch (Exception e) {
@@ -121,7 +123,8 @@ public class VoteController {
 
     public static Handler endVoteHandler = ctx -> {
         try {
-            int precinct = ctx.pathParam("precinct", Integer.class).check(i -> i >= MIN_PRECINCT && i <= MAX_PRECINCT).get();
+            String precinctStr = ctx.pathParam("urlCode", String.class).check(s -> endURLs.contains(s)).get();
+            int precinct = MIN_PRECINCT + endURLs.indexOf(precinctStr);
             boolean noCookie;
             boolean badCookie;
             //This had to be init'd to something.
@@ -223,6 +226,9 @@ public class VoteController {
                 LOG.info(String.format("precinct: %d", precinct));
                 LOG.info(String.format("uuid end: %s\n", uuid));
             }
+        } catch (BadRequestResponse e) {
+            ctx.status(HTTP_BAD_REQUEST);
+            LOG.error("EndVoteHandler: Bad precinct code requested by user!");
         }
         //If something unforeseen goes wrong, log it.
         catch (Exception e) {
@@ -246,6 +252,9 @@ public class VoteController {
                 ctx.status(HTTP_OK);
                 ctx.html("Wait Time For Precinct " + precinct + ": " + voteService.getWaitTime(precinct) + " minute(s)");
             }
+        } catch (BadRequestResponse e) {
+            ctx.status(HTTP_BAD_REQUEST);
+            LOG.error("WaitTimeHandler: Bad precinct number requested by user!");
         }
         //If something unforeseen goes wrong, log it.
         catch (Exception e) {
