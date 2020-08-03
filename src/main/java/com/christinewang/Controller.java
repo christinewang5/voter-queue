@@ -123,7 +123,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + "/start_vote/";
-                String QR_embed = getStart_Printout(p,baseUrl);
+                String QR_embed = getStart_Printout(p,baseUrl,voteService);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e){
@@ -138,7 +138,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + "/end_vote/";
-                String QR_embed = getEnd_Printout(p,baseUrl);
+                String QR_embed = getEnd_Printout(p,baseUrl,voteService);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e) {
@@ -153,7 +153,7 @@ public class Controller {
                 String precinct = req.params(":precinct");
                 int p = Integer.parseInt(precinct);
                 String baseUrl = WEB_HOST + "/wait_time/";
-                String QR_embed = getQR(p, baseUrl, true);
+                String QR_embed = getQR(p, baseUrl, true,2);
                 res.status(HTTP_OK);
                 return QR_embed;
             } catch (Exception e){
@@ -166,7 +166,7 @@ public class Controller {
         get("/all_QR_start", (req, res) -> {
             try {
                 String baseUrl = WEB_HOST + "/start_vote/";
-                String accumulateAll = getStart_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
+                String accumulateAll = getStart_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl,voteService);
                 res.status(HTTP_OK);
                 return accumulateAll;
             } catch (Exception e){
@@ -179,7 +179,7 @@ public class Controller {
         get("/all_QR_end", (req, res) -> {
             try {
                 String baseUrl = WEB_HOST + "/end_vote/";
-                String accumulateAll = getEnd_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl);
+                String accumulateAll = getEnd_Printouts(MIN_PRECINCT,MAX_PRECINCT,baseUrl,voteService);
                 res.status(HTTP_OK);
                 return accumulateAll;
             } catch (Exception e){
@@ -195,7 +195,7 @@ public class Controller {
                 String accumulateAll = "";
                 for (int p = MIN_PRECINCT; p <= MAX_PRECINCT; p++) {
                     accumulateAll += "<p><strong>QR wait code for precinct " + p + "</strong><p>";
-                    accumulateAll += getQR(p, baseURL, true);
+                    accumulateAll += getQR(p, baseURL, true,2);
                 }
                 res.status(HTTP_OK);
                 return accumulateAll;
