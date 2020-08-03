@@ -1,6 +1,5 @@
 <template id="wait-time-overview">
     <div class="container">
-        <div class="text-subtitle-1" style="padding: 16px">Current Wait Times</div>
         <v-simple-table>
             <template v-slot:default>
                 <thead>
@@ -10,7 +9,7 @@
                     <th>Wait Time (in Minutes)</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align:left">
                 <tr v-for="wt in waitTimes">
                     <td>{{wt.precinct}}</td>
                     <td>{{wt.name}}</td>
@@ -31,13 +30,12 @@
             fetch("/api/wait_time_overview")
                 .then(res => res.json())
                 .then(res => this.waitTimes = res)
-                .catch(() => alert("Error while fetching users"));
+                .catch(() => alert("Error while fetching wait times"));
         }
     });
 </script>
 <style>
     div.container {
         position: relative;
-        text-align: center;
     }
 </style>
