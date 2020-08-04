@@ -111,7 +111,7 @@ public class VoteService {
         try (Connection conn = sql2o.beginTransaction()) {
             List<VoteCompleteModel> waitTimes = conn.createQuery("SELECT a.precinct,waittime,name FROM " +
                         "(" +
-                        "SELECT a.precinct,avg(waitTime) AS waitTime FROM " +
+                        "SELECT a.precinct,ROUND(avg(waitTime),2) AS waitTime FROM " +
                             "(SELECT * FROM complete_vote) a " +
                         "JOIN " +
                             "(SELECT * FROM vote WHERE starttime>=:epoch) b " +
