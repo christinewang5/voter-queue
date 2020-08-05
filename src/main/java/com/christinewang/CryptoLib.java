@@ -28,6 +28,8 @@ import static com.christinewang.Application.LOG;
 //passphrase: "voting is awesome"
 /** A bunch of functions to encrypt the admin panel, securing it.
  * */
+//TODO make the key into a param, like /1?key=nonsense
+    //TODO put the phash in db, NO hardcoding of plaintext.
 public class CryptoLib {
     //This is the password for the admin panel.
     private static final String admin_password="voting is awesome";

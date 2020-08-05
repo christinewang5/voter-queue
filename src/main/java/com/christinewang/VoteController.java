@@ -18,8 +18,8 @@ public class VoteController {
 
     public static Handler startVoteHandler = ctx -> {
         try {
-            String precinctStr = ctx.pathParam("urlCode", String.class).check(s -> startURLs.contains(s)).get();
-            int precinct = MIN_PRECINCT + startURLs.indexOf(precinctStr);
+            String k = ctx.pathParam("urlCode", String.class).check(s -> startURLs.contains(s.charAt(s.length()-1)=='=' ? s:s+"=")).get();
+            int precinct = MIN_PRECINCT + startURLs.indexOf(k.charAt(k.length()-1)=='=' ? k:k+"=");
             UUID uuid;
             try {
                 //Try to see if they already have a cookie.
@@ -123,8 +123,8 @@ public class VoteController {
 
     public static Handler endVoteHandler = ctx -> {
         try {
-            String precinctStr = ctx.pathParam("urlCode", String.class).check(s -> endURLs.contains(s)).get();
-            int precinct = MIN_PRECINCT + endURLs.indexOf(precinctStr);
+            String k = ctx.pathParam("urlCode", String.class).check(s -> endURLs.contains(s.charAt(s.length()-1)=='=' ? s : s+"=")).get();
+            int precinct = MIN_PRECINCT + endURLs.indexOf(k.charAt(k.length()-1)=='=' ? k:k+"=");
             boolean noCookie;
             boolean badCookie;
             //This had to be init'd to something.
