@@ -23,6 +23,7 @@ public class QRLibTest {
         boolean works=true;
         works &= check_createQR_b64(false);
         System.out.println(works);
+        System.out.println(get_content("/home/kali/Pictures/qr_1.png"));
         System.out.println(get_content("/home/kali/Pictures/qr_2.png"));
     }
     /** Checks that createQR_b64 is working by decoding the QR code, and checking equality.
