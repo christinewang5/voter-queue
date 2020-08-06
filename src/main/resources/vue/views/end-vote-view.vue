@@ -11,7 +11,11 @@
         }),
         created() {
             const precinct = this.$javalin.pathParams["precinct"];
-            fetch(`/api/end_vote/${precinct}`)
+            let urlCode = this.$javalin.queryParams["urlCode"];
+            if (urlCode===undefined) {
+                urlCode="empty";
+            }
+            fetch(`/api/end_vote/${precinct}?urlCode=${urlCode}`)
                     .then(res => res.text())
                     .then(res => this.resultText = res)
                     .catch(() => alert("Error while text"));

@@ -18,8 +18,9 @@ public class VoteController {
 
     public static Handler startVoteHandler = ctx -> {
         try {
-            String k = ctx.pathParam("urlCode", String.class).check(s -> startURLs.contains(s.charAt(s.length()-1)=='=' ? s:s+"=")).get();
-            int precinct = MIN_PRECINCT + startURLs.indexOf(k.charAt(k.length()-1)=='=' ? k:k+"=");
+            int precinct = ctx.pathParam("precinct", Integer.class).check(s -> MIN_PRECINCT<=s&&s<=MAX_PRECINCT).get();
+            String k = ctx.queryParam("urlCode", String.class, "oops").check(s -> startURLs.contains(s.charAt(s.length()-1)=='=' ? s:s+"=")&&
+                    (MIN_PRECINCT+startURLs.indexOf(s.charAt(s.length()-1)=='=' ? s:s+"=")==precinct)).get();
             UUID uuid;
             try {
                 //Try to see if they already have a cookie.
@@ -108,7 +109,9 @@ public class VoteController {
             CSVLib.logStart(precinct,uuid2);
         }catch (BadRequestResponse e) {
             ctx.status(HTTP_BAD_REQUEST);
-            LOG.error("StartVoteHandler: Bad precinct code requested by user!");
+            LOG.error(String.format("StartVoteHandler: Bad precinct code requested by user!: \nPrecinct: %d\nurlCode: %s",
+                    ctx.pathParam("precinct", Integer.class).get(),
+                    ctx.queryParam("urlCode", String.class).get()));
         }
         //If something unforeseen goes wrong, log it.
         catch (Exception e) {
@@ -123,8 +126,9 @@ public class VoteController {
 
     public static Handler endVoteHandler = ctx -> {
         try {
-            String k = ctx.pathParam("urlCode", String.class).check(s -> endURLs.contains(s.charAt(s.length()-1)=='=' ? s : s+"=")).get();
-            int precinct = MIN_PRECINCT + endURLs.indexOf(k.charAt(k.length()-1)=='=' ? k:k+"=");
+            int precinct = ctx.pathParam("precinct", Integer.class).check(s -> MIN_PRECINCT<=s&&s<=MAX_PRECINCT).get();
+            String k = ctx.queryParam("urlCode", String.class, "oops").check(s -> endURLs.contains(s.charAt(s.length()-1)=='=' ? s:s+"=")&&
+                    (MIN_PRECINCT+endURLs.indexOf(s.charAt(s.length()-1)=='=' ? s:s+"=")==precinct)).get();
             boolean noCookie;
             boolean badCookie;
             //This had to be init'd to something.

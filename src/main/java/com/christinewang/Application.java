@@ -58,8 +58,8 @@ public class Application {
 
 
             get("/api/wait_time_overview", VoteController.getWaitTimeOverview);
-            get("/api/start_vote/:urlCode", VoteController.startVoteHandler);
-            get("/api/end_vote/:urlCode", VoteController.endVoteHandler);
+            get("/api/start_vote/:precinct", VoteController.startVoteHandler);
+            get("/api/end_vote/:precinct", VoteController.endVoteHandler);
 
             get("/wait_time/:precinct", VoteController.waitTimeHandler);
 
