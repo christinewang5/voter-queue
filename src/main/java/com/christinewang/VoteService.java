@@ -359,7 +359,7 @@ public class VoteService {
             //LOG.info("recreated table");
             //And add the new values in.
             try (Connection conn = sql2o.beginTransaction()) {
-                Query q = conn.createQuery("INSERT INTO precinct_names(precinct, name) VALUES" +
+                Query q = conn.createQuery("INSERT INTO precinct_names(precinct, name) VALUES " +
                         "(:precinct, :name)");
                 for (int i = 0; i < names.size(); i++) {
                             q.addParameter("precinct", precincts.get(i))
@@ -412,6 +412,71 @@ public class VoteService {
         } catch (Exception e) {
             LOG.error(String.format("Could not get min precinct! Defaulting to %d.",DEFAULT_MINPREC));
             return DEFAULT_MINPREC;
+        }
+    }
+
+    public String getPassHash_b64(String username) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            Query q = conn.createQuery("SELECT hash_b64 FROM creds WHERE username=:username")
+                    .addParameter("username", username);
+            String passhash = q.executeAndFetch(String.class).get(0);
+            return passhash;
+        } catch (Exception e) {
+            LOG.error("getPassHash_b64: "+e.toString());
+            return "ERROR";
+        }
+    }
+
+    public String getSalt_b64(String username) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            Query q = conn.createQuery("SELECT salt_b64 FROM creds WHERE username=:username")
+                    .addParameter("username", username);
+            String salt = q.executeAndFetch(String.class).get(0);
+            return salt;
+        } catch (Exception e) {
+            LOG.error("getSalt_b64: "+e.toString());
+            return "ERROR";
+        }
+    }
+
+    public byte[] getPassHash(String username) {
+        String hash_b64 = getPassHash_b64(username);
+        if (hash_b64==null) {
+            return new byte[32];
+        }
+        byte[] hash = Base64.getDecoder().decode(hash_b64);
+        return hash;
+    }
+
+    public byte[] getSalt(String username) {
+        String salt_b64 = getSalt_b64(username);
+        if (salt_b64==null) {
+            return new byte[32];
+        }
+        byte[] salt = Base64.getDecoder().decode(salt_b64);
+        return salt;
+    }
+
+    public boolean changeHash(String username, String hash_b64, String salt_b64) {
+        try (Connection conn = sql2o.beginTransaction()) {
+            conn.createQuery("DELETE FROM creds WHERE username=:username")
+                    .addParameter("username", username).executeUpdate();
+            conn.commit();
+        } catch (Exception e) {
+            LOG.error("changeHash: In delete section: "+e.toString());
+            return false;
+        } try (Connection conn = sql2o.beginTransaction()) {
+            Query q = conn.createQuery("INSERT INTO creds(username, hash_b64, salt_b64) VALUES " +
+                    "(:username, :hash_b64, :salt_b64)")
+                    .addParameter("username", username)
+                    .addParameter("hash_b64", hash_b64)
+                    .addParameter("salt_b64", salt_b64);
+            q.executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            LOG.error("changeHash: In insert section: "+e.toString());
+            return false;
         }
     }
 }
