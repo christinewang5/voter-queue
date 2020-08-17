@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.christinewang.AdminController.*;
 import static com.christinewang.CryptoLib.*;
+import static com.christinewang.HerokuUtil.LOCAL_PORT;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 /**
@@ -34,6 +35,7 @@ public class Application {
     public static String uploadsalt=getRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstufwxyz",16);
     public static List<String> startURLs;
     public static List<String> endURLs;
+    public static boolean isRunningLocally;
 
     public static void main(String[] args) {
         Sql2o sql2o = HerokuUtil.setupDB();
@@ -45,11 +47,13 @@ public class Application {
         endURLs = get_EndURLs();
         startURLs = get_StartURLs();
 
+        int port = HerokuUtil.getHerokuAssignedPort();
+        isRunningLocally = port==LOCAL_PORT;
         Javalin app = Javalin.create(config -> {
             config.enableWebjars();
             config.addStaticFiles("/public");
         })
-            .start(HerokuUtil.getHerokuAssignedPort());
+            .start(port);
 
         app.routes(() -> {
             get("/", new VueComponent("<wait-time-overview></wait-time-overview>"));
