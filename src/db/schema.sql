@@ -31,4 +31,10 @@ CREATE TABLE csv_log (
     precinct2 INT
 );
 
+CREATE TABLE creds (
+    username TEXT,
+    hash_b64 TEXT,
+    salt_b64 TEXT
+);
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO voter;

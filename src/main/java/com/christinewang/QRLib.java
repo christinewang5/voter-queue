@@ -103,10 +103,10 @@ public class QRLib {
         String full_URL;
         if (type==0) {
             //Get the precinct code, shifted by min precinct, for 0-based indexing.
-            full_URL = urlBase + Application.startURLs.get(precinct-MIN_PRECINCT);
+            full_URL = urlBase + (precinct-MIN_PRECINCT)+"?urlCode=" + Application.startURLs.get(precinct-MIN_PRECINCT);
         } else if (type==1) {
             //Get the precinct code, shifted by min precinct, for 0-based indexing.
-            full_URL = urlBase + Application.endURLs.get(precinct-MIN_PRECINCT);
+            full_URL = urlBase + (precinct-MIN_PRECINCT)+"?urlCode=" + Application.endURLs.get(precinct-MIN_PRECINCT);
         } else {
             //Concat the urlBase and precinct, to get the full url.
             full_URL = urlBase + precinct;

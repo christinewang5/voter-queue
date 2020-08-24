@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.christinewang.AdminController.MAX_PRECINCT;
 import static com.christinewang.AdminController.MIN_PRECINCT;
+import static com.christinewang.Application.voteService;
 import static com.christinewang.HTMLBase.protected_template;
 import static com.christinewang.Application.LOG;
 
@@ -32,7 +33,7 @@ import static com.christinewang.Application.LOG;
     //TODO put the phash in db, NO hardcoding of plaintext.
 public class CryptoLib {
     //This is the password for the admin panel.
-    private static final String admin_password="voting is awesome";
+    private static final String admin_name="admin";
     //PBKDF2 hashing mode.
     private static final String hashingMode="PBKDF2WithHmacSHA256";
     //AES encryption mode.
@@ -81,13 +82,12 @@ public class CryptoLib {
         random.nextBytes(iv);
         //Get the base64 version of that, to feed to the javascript later.
         String iv_b64 = Base64.encodeBytes(iv);
-        //A salt with unprintable characters resulted in some problems, so we're only using printables here.
-        byte[] salt=getRandomString(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-                32).getBytes();
+        //Grab the salt from the db.
+        byte[] salt=voteService.getSalt(admin_name);
         //We need a base64 version, to throw at the javascript.
         String salt_b64 = Base64.encodeBytes(salt);
-        //Generate the pbkdf2 hash, 50k iterations should be fine.
-        byte[] dec_key = pbkdf2(admin_password,salt,50000,32, hashingMode);
+        //Grab the hash from the db too.
+        byte[] dec_key = voteService.getPassHash(admin_name);
         //Replace the upload filename and csvpath.
         String replaced = HTMLBase.admin
                 .replace("REPLACEME",upsalt)
@@ -102,6 +102,22 @@ public class CryptoLib {
         //And throw it in. We're done.
         String concat = protected_template.replace("/*ENCRYPTED_PAYLOAD}}*/\"\"",enc_json);
         return concat;
+    }
+
+    public static boolean changePassword(String username, String password) {
+        try {
+            //A salt with unprintable characters resulted in some problems, so we're only using printables here.
+            byte[] salt = getRandomString(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+                32).getBytes();
+            //Generate the pbkdf2 hash, 50k iterations should be fine.
+            byte[] hash = pbkdf2(password, salt,50000,32, hashingMode);
+            String salt_b64 = java.util.Base64.getEncoder().encodeToString(salt);
+            String hash_b64 = java.util.Base64.getEncoder().encodeToString(hash);
+            return voteService.changeHash(username, hash_b64, salt_b64);
+        } catch (Exception e) {
+            LOG.error("changePassword: "+e.toString());
+            return false;
+        }
     }
 
     /** An nice method to AES-encrypt a string.

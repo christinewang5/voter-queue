@@ -5,11 +5,12 @@ import io.javalin.http.Handler;
 import static com.christinewang.AdminController.MAX_PRECINCT;
 import static com.christinewang.AdminController.MIN_PRECINCT;
 import static com.christinewang.Application.*;
+import static com.christinewang.HerokuUtil.LOCAL_PORT;
 import static com.christinewang.QRLib.*;
 import static com.christinewang.QRLib.getEnd_Printout;
 
 public class QRController {
-    public static final String WEB_HOST = "https://voter-queue.herokuapp.com";
+    public static final String WEB_HOST = isRunningLocally ?"http://localhost:"+LOCAL_PORT:"https://voter-queue.herokuapp.com";
 
     public static Handler get_QR_startHandler = ctx -> {
         try {

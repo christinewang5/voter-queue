@@ -16,6 +16,7 @@ import java.util.UUID;
 import static com.christinewang.Application.LOG;
 
 public class HerokuUtil {
+    public static final int LOCAL_PORT = 7000;
 
     public static int getHerokuAssignedPort() {
         String herokuPort = System.getenv("PORT");
@@ -23,7 +24,7 @@ public class HerokuUtil {
             return Integer.parseInt(herokuPort);
         }
         LOG.error("Heroku Port is null.");
-        return 7000;
+        return LOCAL_PORT;
     }
 
     /**
